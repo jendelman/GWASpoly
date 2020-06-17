@@ -1,0 +1,8 @@
+export(GWASpoly,manhattan.plot,qq.plot,read.GWASpoly,write.GWASpoly,set.K,set.threshold,set.params,get.QTL)
+exportClasses(GWASpoly,GWASpoly.K,GWASpoly.fitted,GWASpoly.thresh)
+importFrom(rrBLUP,mixed.solve)
+import(methods)
+importFrom("grDevices", "dev.off", "postscript")
+importFrom("graphics", "abline", "axis", "lines", "par", "plot","points")
+importFrom("stats", "model.matrix", "na.omit", "pbeta", "ppoints","predict", "smooth.spline")
+importFrom("utils", "read.table", "write.table")

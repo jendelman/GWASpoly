@@ -1,0 +1,11 @@
+citHeader("To cite the GWASpoly package in publications, please use")
+
+citEntry(entry="Article",
+	title="Software for genome-wide association studies in autopolyploids and its application to potato",
+	author=personList(as.person("U. R. Rosyara"),as.person("W. S. De Jong"),as.person("D. S. Douches"),as.person("J. B. Endelman")),
+	year=2016,
+	journal="Plant Genome",
+    volume="9",
+    pages="doi:10.3835/plantgenome2015.08.0073",	
+    textVersion="Rosyara UR, De Jong WS, Douches DS, Endelman JB (2016) Software for genome-wide association studies in autopolyploids and its application to potato. Plant Genome 9, doi:10.3835/plantgenome2015.08.0073"
+)
