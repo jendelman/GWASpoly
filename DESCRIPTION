@@ -9,3 +9,4 @@ LazyData: true
 Encoding: UTF-8
 Imports: rrBLUP, methods
 Suggests: parallel
+RoxygenNote: 7.1.0
