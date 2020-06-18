@@ -3,7 +3,7 @@ title: "GWASpoly Version 2"
 output: rmarkdown::html_vignette
 date: "June 2020"
 vignette: >
-  %\VignetteIndexEntry{GWASpoly Tutorial}
+  %\VignetteIndexEntry{GWASpoly}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
