@@ -1,6 +1,7 @@
 ---
-title: "GWASpoly Tutorial"
+title: "GWASpoly Version 2"
 output: rmarkdown::html_vignette
+date: "June 2020"
 vignette: >
   %\VignetteIndexEntry{GWASpoly Tutorial}
   %\VignetteEngine{knitr::rmarkdown}
@@ -8,16 +9,18 @@ vignette: >
 ---
 
 ```{r include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,collapse=FALSE,comment="##",fig.width=5,fig.height=5)
+knitr::opts_chunk$set(echo = TRUE,collapse=FALSE,comment="##")
 ```
 
 ## Overview
+After a hiatus of several years, GWASpoly is under active development again, so this document will be updated regularly. 
+
 The following table outlines the basic workflow:
 
 | Function      | Purpose     |
 |:--------------|:------------|
 |read.GWASpoly|Read in the marker and phenotype data|
-|set.K|Calculate the kinship matrix|
+|set.K|Specify covariance matrix for the polygenic effect|
 |set.params|Specify additional model parameters|
 |GWASpoly|Perform the mixed model association test|
 |qq.plot|Check inflation of p-values|
@@ -41,7 +44,7 @@ The first column of the pheno.file contains the genotype identifier (i.e., the n
 
 ##2. Set the kinship matrix and other parameters
 ```{r}
-data2 <- set.K(data)
+data <- set.K(data)
 params <- set.params(fixed=c("Grp1","Grp2","Grp3","Grp4"),fixed.type=rep("numeric",4))
 ```
 The function `set.K` is used to set the covariance matrix for a random polygenic effect. (K stands for kinship, but this is a misnomer.) The default approach is $K=MM'$, where $M$ is the centered genotype matrix. In many situations, the polygenic effect is sufficient to control population structure. However, if there is strong stratification, then including population structure covariates may be desirable to further reduce p-value inflation. The function `set.params` can be used for this purpose (shown above), as well as to include other types of fixed effects (e.g., when data are collected in multiple environments).
@@ -49,10 +52,26 @@ The function `set.K` is used to set the covariance matrix for a random polygenic
 ##3. Testing markers for significance
 The following code tells the software to analyze two traits using additive and simplex dominance models. 
 ```{r}
-data3 <- GWASpoly(data2,models=c("additive","1-dom"),traits=c("tuber_shape","tuber_eye_depth"),params=params)
+data <- GWASpoly(data,models=c("additive","1-dom"),traits=c("tuber_shape","tuber_eye_depth"),params=params)
 ```
 For the dominance model, two different analyses are conducted, corresponding to whether the reference (A) or alternate (B) allele is dominant. For "ACGT" marker data, the choice of reference allele is arbtirary and included when results are written to file. 
 
-With any 
+One of the standard diagnostics in GWAS is to check the inflation of the -log10(p) values (aka "scores"). This can be done using a quantile-quantile plot of the observed vs. expected values under the null hypothesis, which follows a uniform distribution and is shown with a dotted line. NEW for GWASpoly version 2: the ggplot2 package is now used to handle multiple models and traits. The user can also plot only a subset of traits and models (see the manual). 
+```{r,fig.width=8,fig.height=5}
+qq.plot(data=data)
+```
+
+The distribution of -log10(p) values along the genome is visualized using a Manhattan plot:
+```{r,fig.width=8,fig.height=5}
+manhattan.plot(data=data)
+```
+
+##4. Extracting significant QTL
+There are three options for establishing a -log10(p) threshold. To control the genome-wide false positive rate, one can use either the Bonferroni method or permutation test. Alternatively, one can control the false discovery rate (FDR). The following code illustrates the Bonferroni method.
+```{r}
+data <- set.threshold(data,method="Bonferroni",level=0.05)
+get.QTL(data)
+```
+
 
 

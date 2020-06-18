@@ -14,7 +14,7 @@
 #' @import ggplot2
 #' @importFrom tidyr pivot_longer
 
-manhattan.plot <- function(data,traits=NULL,models=NULL,y.max=NULL) {
+manhattan.plot <- function(data,traits=NULL,models=NULL) {
 		
 	stopifnot(inherits(data,"GWASpoly.fitted"))
   if (is.null(traits)) {

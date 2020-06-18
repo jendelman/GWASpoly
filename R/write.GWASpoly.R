@@ -11,6 +11,8 @@
 #' @param delim Delimiter to use in the output file (default is comma)
 #' 
 #' @export
+#' @importFrom utils write.table
+#' 
 write.GWASpoly <- function(data,trait,filename,what="scores",delim=",") {
 	stopifnot(inherits(data,"GWASpoly.fitted"))
 	traits <- names(data@scores)

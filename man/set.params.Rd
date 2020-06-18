@@ -18,13 +18,13 @@ set.params(
 
 \item{fixed.type}{Vector of effect types ("numeric" or "factor"), corresponding to the effects listed in "fixed"}
 
+\item{n.PC}{Number of principal components to include as covariates}
+
 \item{MAF}{Minimum minor allele frequency}
 
 \item{geno.freq}{Maximum genotype frequency (after applying dominance relations)}
 
 \item{P3D}{TRUE/FALSE whether to use the P3D approximation (variance components not re-estimated for every marker)}
-
-\item{Number}{of principal components to include as covariates}
 }
 \value{
 A list with the following components 

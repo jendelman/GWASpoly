@@ -1,14 +1,14 @@
 Package: GWASpoly
 Title: Genome-wide Association Studies for Autopolyploids
-Version: 1.4
+Version: 2.0
 Author: Jeffrey B. Endelman, Umesh R. Rosyara
 Maintainer: Jeffrey Endelman <endelman@wisc.edu>
-Description: Extends the GWAS functionality of the rrBLUP package to handle autopolyploids.  Marker dosage and polyploid genetic models are supported.  
+Description: Designed for genome-wide association studies in autopolyploids.  
 License: GPL-3
 LazyData: true
 RoxygenNote: 7.1.0
 Encoding: UTF-8
-Imports: rrBLUP, methods
+Imports: rrBLUP, methods, ggplot2, tidyr, stats
 Suggests: parallel, knitr
 VignetteBuilder: knitr
 Collate: 

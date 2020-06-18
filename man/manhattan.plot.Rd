@@ -4,7 +4,7 @@
 \alias{manhattan.plot}
 \title{Create Manhattan plot}
 \usage{
-manhattan.plot(data, traits = NULL, models = NULL, y.max = NULL)
+manhattan.plot(data, traits = NULL, models = NULL)
 }
 \arguments{
 \item{data}{Variable of class \code{GWASpoly.fitted}}

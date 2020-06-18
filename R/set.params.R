@@ -6,7 +6,7 @@
 #' 
 #' @param fixed Vector of names of fixed effects
 #' @param fixed.type Vector of effect types ("numeric" or "factor"), corresponding to the effects listed in "fixed"
-#' @param Number of principal components to include as covariates
+#' @param n.PC Number of principal components to include as covariates
 #' @param MAF Minimum minor allele frequency
 #' @param geno.freq Maximum genotype frequency (after applying dominance relations)
 #' @param P3D TRUE/FALSE whether to use the P3D approximation (variance components not re-estimated for every marker)

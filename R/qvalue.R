@@ -1,3 +1,4 @@
+#'@importFrom stats smooth.spline predict
 .qvalue <- function(p) {
         smooth.df = 3
         if (min(p) < 0 || max(p) > 1) {

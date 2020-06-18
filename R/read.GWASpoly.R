@@ -21,6 +21,9 @@
 #'
 #'@return Variable of class \code{GWASpoly.data}
 #'@export
+#'@importFrom methods new
+#'@importFrom stats na.omit
+#'@importFrom utils read.table
 #'
 read.GWASpoly <- function(ploidy, pheno.file, geno.file, format, n.traits, delim = ","){
 

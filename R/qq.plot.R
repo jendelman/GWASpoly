@@ -10,8 +10,9 @@
 #' 
 #' @export
 #' @import ggplot2
-#' @importFrom stats ppoints
 #' @importFrom tidyr pivot_longer
+#' @importFrom stats ppoints
+
 
 qq.plot <- function(data,traits=NULL,models=NULL) {
 	stopifnot(inherits(data,"GWASpoly.fitted"))

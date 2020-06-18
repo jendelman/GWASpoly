@@ -1,3 +1,4 @@
+#' @importFrom stats pbeta
 .score.calc <- function(marks,y,Z,X,K,M,Hinv,ploidy,model,min.MAF,max.geno.freq) {
 m <- length(marks)
 n <- nrow(Z)

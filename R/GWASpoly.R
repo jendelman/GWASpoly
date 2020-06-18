@@ -22,6 +22,7 @@
 #' @return Variable of class \code{GWASpoly.fitted}
 #' @export
 #' @importFrom rrBLUP mixed.solve
+#' @importFrom stats model.matrix
 #' 
 GWASpoly <- function(data,models,traits=NULL,params=NULL,n.core=1,quiet=F) {
 	
