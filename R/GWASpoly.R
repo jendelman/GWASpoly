@@ -1,3 +1,28 @@
+#' Compute marker significance scores
+#' 
+#' Compute marker significance scores
+#' 
+#' The following marker-effect models are available:
+#' \itemize{
+#'  \item "additive": Indicates the marker effect is proportional to the dosage of the alternate allele
+#'  \item "X-dom": where X can be any integer between 1 and ploidy/2 and refers to the allele dosage needed for complete dominance (e.g., "1-dom" = simplex dominance, "2-dom" = duplex dominance).  The software tries both dominance patterns for a given dosage model, e.g., whether the reference or alternate allele is dominant
+#'  \item "diplo-general": All heterozygotes have the same effect
+#'  \item "diplo-additive": All heterozygotes have the same effect, constrained to be halfway between the homozygous effects
+#'  \item "general": There are no constraints on the effects of the different dosage levels
+#'  }
+#' To specify additional model parameters, such as the inclusion of fixed effects (Q matrix) and the minimum minor allele frequency, use \code{set.params}
+#' 
+#' @param data Output from \code{set.K}
+#' @param models Vector of model names
+#' @param traits Vector trait names (by default, all traits)
+#' @param params Optional list of params created by \code{set.params}
+#' @param n.core Number of cores for parallel computing
+#' @param quiet TRUE/FALSE whether to suppress output charting progress
+#'
+#' @return Variable of class \code{GWASpoly.fitted}
+#' @export
+#' @importFrom rrBLUP mixed.solve
+#' 
 GWASpoly <- function(data,models,traits=NULL,params=NULL,n.core=1,quiet=F) {
 	
 stopifnot(inherits(data,"GWASpoly.K"))
@@ -92,5 +117,5 @@ all.scores[[j]] <- data.frame(scores,check.names=F)
 all.effects[[j]] <- data.frame(betas,check.names=F)
 }
 
-return(new("GWASpoly.fitted",data,scores=all.scores,effects=all.effects,params=params))  
+return(new("GWASpoly.fitted",map=data@map,pheno=data@pheno,fixed=data@fixed,geno=data@geno,ploidy=data@ploidy,K=data@K,scores=all.scores,effects=all.effects,params=params))  
 }

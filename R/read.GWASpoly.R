@@ -1,3 +1,27 @@
+#' Read in marker and phenotype data
+#' 
+#' Read in marker and phenotype data
+#' 
+#' The first column of the phenotype file contains the genotype identifier, columns 2 through (n.traits + 1) contain trait values, and subsequent columns contain the levels (for factors) or numeric values (for covariates) of any fixed effects.  
+#' The first three columns of the genotype file are (1) marker name, (2) chromosome, and (3) position.  Subsequent columns contain the marker data for each individual in the population.  
+#' Marker data can be coded in one of three formats: 
+#' \itemize{
+#' \item "numeric": markers are coded based on the dosage of the alternate allele, taking on integer values between 0 and ploidy (fractional values not allowed)
+#' \item "AB": e.g., AAAB, ABBB for tetraploids
+#' \item "ACGT": e.g., AAAT, GGCC for tetraploids
+#'}
+#'Only bi-allelic markers are allowed.  Missing marker data will be imputed with the population mode (most frequent value) for each marker.
+#'
+#' @param ploidy Ploidy (e.g., 2 for diploid, 4 for tetraploid)
+#' @param pheno.file Name of the phenotype file
+#' @param geno.file Name of the genotype file
+#' @param format Format for the marker data. See details.
+#' @param n.traits Number of traits 
+#' @param delim Character to indicate the delimiter in the data files (e.g., "," for csv, "\\t" for tab-delimited)
+#'
+#'@return Variable of class \code{GWASpoly.data}
+#'@export
+#'
 read.GWASpoly <- function(ploidy, pheno.file, geno.file, format, n.traits, delim = ","){
 
 if (format=="ACTG") {format <- "ACGT"}
@@ -92,5 +116,5 @@ traits <- colnames(pheno)[-1]
 cat(paste("Detected following traits:\n",paste(traits,collapse="\n"),"\n",sep=""))
 
 # construct GWASpoly data structure
-return(new("GWASpoly",map=map,pheno=pheno,fixed=fixed,geno=M,ploidy=ploidy))
+return(new("GWASpoly.data",map=map,pheno=pheno,fixed=fixed,geno=M,ploidy=ploidy))
 }

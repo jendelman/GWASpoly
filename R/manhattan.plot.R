@@ -1,49 +1,58 @@
-manhattan.plot <- function(data,trait,model,cex=1,y.max=NULL,filename=NULL) {
+#' Create Manhattan plot
+#' 
+#' Create Manhattan plot
+#' 
+#' Results for the ref and alt versions of the dominance model are combined
+#' 
+#' @param data Variable of class \code{GWASpoly.fitted}
+#' @param traits Vector of trait names (by default, all traits plotted)
+#' @param models Vector of model names (by default, all models plotted)
+#' 
+#' @return ggplot2 object
+#' 
+#' @export
+#' @import ggplot2
+#' @importFrom tidyr pivot_longer
+
+manhattan.plot <- function(data,traits=NULL,models=NULL,y.max=NULL) {
 		
 	stopifnot(inherits(data,"GWASpoly.fitted"))
-	traits <- names(data@scores)
-	stopifnot(is.element(trait,traits))
-	models <- colnames(data@scores[[trait]])
-	stopifnot(is.element(model,models))
-	input <- data.frame(data@map[,1:3],scores=data@scores[[trait]][,model])
+  if (is.null(traits)) {
+    traits <- names(data@scores)
+  } else {
+    stopifnot(all(is.element(traits,names(data@scores))))
+  }
+  n.trait <- length(traits)
+  all.models <- colnames(data@scores[[1]])
+  if (is.null(models)) {
+    models <- all.models
+  } else {
+    stopifnot(all(is.element(models,all.models)))
+  }
 
-	chroms <- levels(data@map$Chrom)	
-	n.chrom <- length(chroms)
-	chrom.start <- rep(0,n.chrom)
-	chrom.mid <- rep(0,n.chrom)
-	if (is.null(y.max)) {
-		y.max <- max(input[,4],na.rm=T)+1
-		if (class(data)=="GWASpoly.thresh") {
-			y.max <- max(y.max,data@threshold[trait,model]+1)
-		}
-	}
-
-	if (!is.null(filename)) {postscript(file=filename,horizontal=FALSE)}
-	par(pty="s")
-	if (n.chrom > 1) {
-		for (i in 1:(n.chrom-1)) {chrom.start[i+1] <- chrom.start[i]+max(input[which(input[,2]==chroms[i]),3])+1}
-	}
-	x.max <- chrom.start[n.chrom]+max(input[which(input[,2]==chroms[n.chrom]),3])
-	plot(0,0,type="n",xlim=c(0,x.max),ylim=c(0,y.max),ylab=expression(paste("-log"[10],"(p)",sep="")),xlab="Chromosome",xaxt="n",main=paste(trait," (",model,") ",sep=""))
-
-	for (i in seq(1,n.chrom,by=2)) {
-		ix <- which(input[,2]==chroms[i])
-		chrom.mid[i] <- chrom.start[i]+max(input[ix,3])/2
-		points(chrom.start[i]+input[ix,3],input[ix,4],col="dark blue",pch=16,cex=cex)
-	}	
-
-	if (n.chrom > 1){
-	for (i in seq(2,n.chrom,by=2)) {
-		ix <- which(input[,2]==chroms[i])
-		chrom.mid[i] <- chrom.start[i]+max(input[ix,3])/2
-		points(chrom.start[i]+input[ix,3],input[ix,4],col="cornflowerblue",pch=16,cex=cex)
-	}	
-	}
-	
-	if (class(data)=="GWASpoly.thresh") {
-		abline(h=data@threshold[trait,model],lty=2)
-	}
-	axis(side=1,at=chrom.mid,labels=chroms)
-	if (!is.null(filename)) {dev.off()}
-	return(NULL)	
+  plotme <- NULL
+  x <- get_x(data@map[,2:3])
+  for (k in 1:n.trait) {
+    scores <- as.data.frame(data@scores[[traits[k]]][,models])
+    colnames(scores) <- models
+    scores$x <- x
+    scores$color <- factor(ifelse(as.integer(factor(data@map[,2]))%%2==1,1,0))
+    tmp <- pivot_longer(data=scores,cols=match(models,colnames(scores)),names_to="model",values_to="y",values_drop_na=TRUE)
+    tmp$trait <- traits[k]
+    plotme <- rbind(plotme,tmp)
+  }
+  plotme$trait <- factor(plotme$trait)
+  plotme$model <- gsub(pattern="-ref",replacement="",x=plotme$model)
+  plotme$model <- gsub(pattern="-alt",replacement="",x=plotme$model)
+  plotme$model <- factor(plotme$model)
+  
+  allchr <- unique(data@map[,2])
+  breaks <- (tapply(x,data@map[,2],max) + tapply(x,data@map[,2],min))/2
+  p <- ggplot(data=plotme,aes(x=x,y=y,colour=color,shape=model)) +
+    ylab(expression(paste("-log"[10],"(p)"))) +
+    theme_bw() + theme(text = element_text(size=15),panel.grid = element_blank()) +
+    scale_x_continuous(name="Chromosome",breaks=breaks,labels=allchr) +
+    guides(colour="none") + geom_point() + scale_shape(solid=FALSE) + scale_colour_manual(values = c("cornflowerblue","darkblue")) + facet_wrap(~trait)
+  
+	return(p)	
 }

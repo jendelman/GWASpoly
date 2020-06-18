@@ -19,19 +19,19 @@ for (i in 1:m) {
 		} 
 		W <- crossprod(X2, Hinv %*% X2) 
 		Winv <- try(solve(W),silent=TRUE)
-        if (class(Winv) != "try-error") {
-		    beta <- Winv %*% crossprod(X2, Hinv %*% y)
-		    resid <- y - X2 %*% beta
-		    s2 <- as.double(crossprod(resid, Hinv %*% resid))/v2
-		    Q <- s2 * Winv[(p-v1+1):p,(p-v1+1):p]
-		    Tt <- solve(Q, silent= TRUE)
-            if (class(Tt) != "try-error") {
-			    V <- beta[(p+1-v1):p]
-			    Fstat <- crossprod(V,Tt%*%V)/v1
-			    x <- v2/(v2+v1*Fstat)
-			    scores[i] <- -log10(pbeta(x, v2/2, v1/2)) 
-			    if (!general) {beta.out[i] <- beta[p]}                    
-			}
+    if (class(Winv) != "try-error") {
+		  beta <- Winv %*% crossprod(X2, Hinv %*% y)
+		  resid <- y - X2 %*% beta
+		  s2 <- as.double(crossprod(resid, Hinv %*% resid))/v2
+		  Q <- s2 * Winv[(p-v1+1):p,(p-v1+1):p]
+		  Tt <- solve(Q, silent= TRUE)
+      if (class(Tt) != "try-error") {
+			  V <- beta[(p+1-v1):p]
+			  Fstat <- crossprod(V,Tt%*%V)/v1
+			  x <- v2/(v2+v1*Fstat)
+			  scores[i] <- -log10(pbeta(x, v2/2, v1/2)) 
+			  if (!general) {beta.out[i] <- beta[p]}                    
+			 }
 		}
 	}
 }

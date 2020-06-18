@@ -1,3 +1,17 @@
+#' Extract significant QTL
+#' 
+#' Output a table with all significant markers
+#' 
+#' Score = -log10(p). Effect = marker effect (not available for the general and diplo-general models).
+#' 
+#' @param data Output from \code{set.threshold}
+#' @param traits Vector of trait names (by default, all traits)
+#' @param models Vector of model names (by default, all models)
+#' 
+#' @return Data frame with results for significant markers
+#' 
+#' @export
+#' 
 get.QTL <- function(data,traits=NULL,models=NULL) {
 	stopifnot(inherits(data,"GWASpoly.thresh"))
 	if (is.null(traits)) {
@@ -17,7 +31,9 @@ get.QTL <- function(data,traits=NULL,models=NULL) {
 		for (j in 1:n.model) {
 			ix <- which(data@scores[[traits[i]]][,models[j]] > data@threshold[traits[i],models[j]])
 			n.ix <- length(ix)
-			output <- rbind(output,data.frame(Trait=rep(traits[i],n.ix),Model=rep(models[j],n.ix),Threshold=round(rep(data@threshold[traits[i],models[j]],n.ix),2),data@map[ix,],Score=round(data@scores[[traits[i]]][ix,models[j]],2),Effect=round(data@effects[[traits[i]]][ix,models[j]],2),stringsAsFactors=F,check.names=F))
+			if (n.ix > 0) {
+			  output <- rbind(output,data.frame(Trait=rep(traits[i],n.ix),Model=rep(models[j],n.ix),Threshold=round(rep(data@threshold[traits[i],models[j]],n.ix),2),data@map[ix,],Score=round(data@scores[[traits[i]]][ix,models[j]],2),Effect=formatC(data@effects[[traits[i]]][ix,models[j]],2,format="e"),stringsAsFactors=F,check.names=F))
+			}
 		}
 	}
 	return(output)
