@@ -40,5 +40,3 @@ vignettes/*.pdf
 .Renviron
 .Rproj.user
 *.Rproj
-doc
-Meta
