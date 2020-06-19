@@ -7,6 +7,5 @@
 #' @slot ploidy ploidy
 #' @slot K covariance matrix for polygenic effect
 #' 
-#' @export
 #' @include GWASpoly.data.R
 GWASpoly.K <- setClass("GWASpoly.K",slots=c(K="matrix"),contains="GWASpoly.data")

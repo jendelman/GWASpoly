@@ -10,6 +10,5 @@
 #' @slot effects estimated marker effects
 #' @slot params parameters used for the analysis
 #' 
-#' @export
 #' @include GWASpoly.K.R
 GWASpoly.fitted <- setClass("GWASpoly.fitted",slots=c(scores="list",effects="list",params="list"),contains="GWASpoly.K")

@@ -6,5 +6,4 @@
 #' @slot fixed data frame of fixed effects
 #' @slot ploidy ploidy
 #' 
-#' @export
 GWASpoly.data <- setClass("GWASpoly.data",slots=c(map="data.frame",pheno="data.frame",geno="matrix",fixed="data.frame",ploidy="numeric"))

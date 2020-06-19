@@ -11,6 +11,5 @@
 #' @slot params parameters used for the analysis
 #' @slot threshold thresholds for significance
 #' 
-#' @export
 #' @include GWASpoly.fitted.R
 GWASpoly.thresh <- setClass("GWASpoly.thresh",slots=c(threshold="matrix"),contains="GWASpoly.fitted")
