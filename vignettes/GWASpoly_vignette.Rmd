@@ -1,11 +1,12 @@
 ---
 title: "GWASpoly Version 2"
-output: rmarkdown::html_vignette
 date: "June 2020"
+output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{GWASpoly}
-  %\VignetteEngine{knitr::rmarkdown}
-  \usepackage[utf8]{inputenc}
+    %\VignetteIndexEntry{GWASpoly}
+    %\VignetteEngine{knitr::rmarkdown}
+    \usepackage[utf8]{inputenc}
+
 ---
 
 ```{r include=FALSE}
