@@ -1,6 +1,5 @@
-GWASpoly R Package
+R Package GWASpoly
 ================
-Jeffrey Endelman and Umesh Rosyara
 
 This package was designed for genome-wide association studies in autopolyploids (and also works for diploids). A [vignette is available](https://jendelman.github.io/GWASpoly/GWASpoly.html) to illustrate the basic workflow using the potato dataset that comes with the package. More detailed information is available in the [package reference manual](https://jendelman.github.io/GWASpoly/GWASpoly_manual.pdf).
 

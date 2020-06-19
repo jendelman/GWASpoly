@@ -1,6 +1,5 @@
 ---
-title: "GWASpoly R Package"
-author: Jeffrey Endelman and Umesh Rosyara
+title: "R Package GWASpoly"
 output: github_document
 ---
 
