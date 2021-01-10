@@ -2,7 +2,7 @@
 #' 
 #' @slot map data frame with marker,chrom,and position (either bp or cM)
 #' @slot pheno data frame of phenotypes
-#' @slot geno matrix with allele dosages
+#' @slot geno matrix (individuals x markers) of allele dosages (0,1,2,...ploidy)
 #' @slot fixed data frame of fixed effects
 #' @slot ploidy ploidy
 #' 

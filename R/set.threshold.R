@@ -2,30 +2,44 @@
 #' 
 #' Set the significance threshold
 #' 
-#' The FDR method is based on version 1.30.0 of the qvalue package
+#' The default method, "M.eff", is a Bonferroni-type correction but using an effective number of markers that accounts for LD between markers (Moskvina and Schmidt, 2008). The FDR method is based on version 1.30.0 of the qvalue package. 
 #' 
 #' @param data Variable of class \code{GWASpoly.fitted}
-#' @param method One of the following: "Bonferroni","FDR","permute"
-#' @param level Genome-wide false positive rate for the Bonferroni or permutation methods; false discovery rate for method FDR
+#' @param method One of the following: "M.eff","Bonferroni","FDR","permute"
+#' @param level Genome-wide false positive or false discovery rate (depending on \code{method}). 
 #' @param n.permute Number of permutations for method "permute"
 #' @param n.core Number of cores to use for multicore processing
+#' 
+#' @references Moskvina V, Schmidt KM (2008) On multiple-testing correction in genome-wide association studies. Genetic Epidemiology 32:567-573. doi:10.1002/gepi.20331
 #' 
 #' @return Variable of class \code{GWASpoly.thresh}
 #' 
 #' @export
 #' 
-set.threshold <- function(data,method,level=0.05,n.permute=1000,n.core=1) {
+set.threshold <- function(data,method="M.eff",level=0.05,n.permute=1000,n.core=1) {
 
 	stopifnot(inherits(data,"GWASpoly.fitted"))
 	traits <- names(data@scores)
 	n.trait <- length(traits)
 	models <- colnames(data@scores[[1]])
 	n.model <- length(models)
-	methods <- c("Bonferroni","FDR","permute")
+	methods <- c("M.eff","Bonferroni","FDR","permute")
 	stopifnot(is.element(method,methods))
 	threshold <- matrix(NA,n.trait,n.model)
 	colnames(threshold) <- models
 	rownames(threshold) <- traits
+	
+	if (method=="M.eff") {
+	  chrom <- levels(data@map[,2])
+	  n.chrom <- length(chrom)
+	  r2 <- vector("list",n.chrom)
+	  names(r2) <- chrom
+	  for (i in chrom) {
+	    ix <- which(data@map[,2]==i)
+	    r2[[i]] <- cor(data@geno[,ix])^2
+	  }
+	}
+	
 	for (i in 1:n.trait) {
 		trait <- traits[i]
 		if (method=="permute") {
@@ -44,9 +58,18 @@ set.threshold <- function(data,method,level=0.05,n.permute=1000,n.core=1) {
 		}
 		for (j in 1:n.model) {
 			model <-  models[j]
-			scores <- as.vector(na.omit(data@scores[[trait]][,model]))
+			iv <- which(!is.na(data@scores[[trait]][,model]))
+			scores <- as.vector(data@scores[[trait]][iv,model])
 			m <- length(scores)
 			if (method=="Bonferroni") {threshold[i,j] <- -log10(level/m)}
+			if (method=="M.eff") {
+			  me <- 0
+			  for (chr in chrom) {
+			    ix <- data@map[intersect(iv,which(data@map[,2]==chr)),1]
+			    me <- me + Keff(r2=r2[[chr]][ix,ix],alpha=level)
+			  }
+			  threshold[i,j] <- -log10(level/me)
+			}
 			if (method=="FDR") {
 				tmp <- cbind(10^(-scores),.qvalue(10^(-scores)))
 				tmp <- tmp[order(tmp[,2]),]

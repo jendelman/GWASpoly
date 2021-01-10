@@ -27,6 +27,7 @@ manhattan.plot <- function(data,traits=NULL,models=NULL) {
   if (is.null(models)) {
     models <- all.models
   } else {
+    models <- unlist(lapply(as.list(models),function(x){all.models[grep(x,all.models,fixed=T)]}))
     stopifnot(all(is.element(models,all.models)))
   }
 

@@ -4,14 +4,20 @@
 \alias{set.threshold}
 \title{Set the significance threshold}
 \usage{
-set.threshold(data, method, level = 0.05, n.permute = 1000, n.core = 1)
+set.threshold(
+  data,
+  method = "M.eff",
+  level = 0.05,
+  n.permute = 1000,
+  n.core = 1
+)
 }
 \arguments{
 \item{data}{Variable of class \code{GWASpoly.fitted}}
 
-\item{method}{One of the following: "Bonferroni","FDR","permute"}
+\item{method}{One of the following: "M.eff","Bonferroni","FDR","permute"}
 
-\item{level}{Genome-wide false positive rate for the Bonferroni or permutation methods; false discovery rate for method FDR}
+\item{level}{Genome-wide false positive or false discovery rate (depending on \code{method}).}
 
 \item{n.permute}{Number of permutations for method "permute"}
 
@@ -24,5 +30,8 @@ Variable of class \code{GWASpoly.thresh}
 Set the significance threshold
 }
 \details{
-The FDR method is based on version 1.30.0 of the qvalue package
+The default method, "M.eff", is a Bonferroni-type correction but using an effective number of markers that accounts for LD between markers (Moskvina and Schmidt, 2008). The FDR method is based on version 1.30.0 of the qvalue package.
+}
+\references{
+Moskvina V, Schmidt KM (2008) On multiple-testing correction in genome-wide association studies. Genetic Epidemiology 32:567-573. doi:10.1002/gepi.20331
 }

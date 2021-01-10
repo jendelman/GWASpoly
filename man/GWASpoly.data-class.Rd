@@ -15,7 +15,7 @@ S4 class with genotype and phenotype data
 
 \item{\code{pheno}}{data frame of phenotypes}
 
-\item{\code{geno}}{matrix with allele dosages}
+\item{\code{geno}}{matrix (individuals x markers) of allele dosages (0,1,2,...ploidy)}
 
 \item{\code{fixed}}{data frame of fixed effects}
 
