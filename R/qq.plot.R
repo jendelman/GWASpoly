@@ -47,7 +47,7 @@ qq.plot <- function(data,traits=NULL,models=NULL) {
 	}
   plotme$trait <- factor(plotme$trait,ordered=T,levels=traits)
 	 
-  p <- ggplot(data=plotme,aes(x=x,y=y,colour=model)) + facet_wrap(~trait) + geom_point() + theme_bw() + xlab(expression(paste("Expected -log"[10],"(p)",sep=""))) + ylab(expression(paste("Observed -log"[10],"(p)",sep=""))) + scale_colour_brewer(palette="Set1") + geom_abline(slope=1,intercept=0,linetype=2) + theme(text = element_text(size=20))
+  p <- ggplot(data=plotme,aes(x=x,y=y,colour=model)) + facet_wrap(~trait) + geom_point() + theme_bw() + xlab(expression(paste("Expected -log"[10],"(p)",sep=""))) + ylab(expression(paste("Observed -log"[10],"(p)",sep=""))) + scale_colour_brewer(palette="Set1") + geom_abline(slope=1,intercept=0,linetype=2) + theme(text = element_text(size=15))
   return(p)	  
 }
   
