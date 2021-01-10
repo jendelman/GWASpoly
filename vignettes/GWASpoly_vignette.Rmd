@@ -1,6 +1,6 @@
 ---
 title: "GWASpoly Version 2"
-date: "June 2020"
+date: "January 2021"
 output: rmarkdown::html_vignette
 vignette: >
     %\VignetteIndexEntry{GWASpoly}
@@ -10,12 +10,12 @@ vignette: >
 ---
 
 ```{r include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,collapse=FALSE,comment="##")
+library(knitr)
+library(rmarkdown)
+opts_chunk$set(echo = TRUE,collapse=FALSE,comment="##")
 ```
 
 ## Overview
-After a hiatus of several years, GWASpoly is under active development again, so this document will be updated regularly. 
-
 The following table outlines the basic workflow:
 
 | Function      | Purpose     |
@@ -30,48 +30,70 @@ The following table outlines the basic workflow:
 |get.QTL|Extract list of significant markers|
 |write.GWASpoly|Write results to file|
 
-##1. Read the data
+## Read the data
 The potato marker (TableS1.csv) and phenotype (TableS2.csv) datafiles that come with the package were published as supplemental files by Rosyara et al. (2016). The `system.file` command is used to obtain the path to these files, which get installed in the subdirectory "extdata." You will not need to do this when analyzing your own data; just pass the names of the files as strings.
 ```{r}
 TableS1 <- system.file("extdata", "TableS1.csv", package = "GWASpoly")
 TableS2 <- system.file("extdata", "TableS2.csv", package = "GWASpoly")
 
 library(GWASpoly)
-data <- read.GWASpoly(ploidy=4,pheno.file=TableS2,geno.file=TableS1,format="ACGT",n.traits=13,delim=",")
+data <- read.GWASpoly(ploidy=4,pheno.file=TableS2,
+                      geno.file=TableS1,format="ACGT",n.traits=13,delim=",")
 ```
 The first three columns of the geno.file contain the marker name, chromosome, and map position (in either cM or bp). Subsequent columns contain the marker data, which can be coded using one of three formats. The sample potato dataset is provided in "ACGT" (i.e., nucleotide) format. The other possible formats are "numeric" (0,1,2,..ploidy) and "AB". Missing marker data are imputed with the population mode (most frequent genotype).
 
 The first column of the pheno.file contains the genotype identifier (i.e., the name of the individual or clone), followed by columns of trait data (specify the number of traits with `n.traits`). After the traits can be columns with potential fixed effects. In the potato example, there are 13 traits and 4 columns with population structure covariates.
 
-##2. Set the kinship matrix and other parameters
+## Set the kinship matrix and other parameters
 ```{r}
 data <- set.K(data)
 params <- set.params(fixed=c("Grp1","Grp2","Grp3","Grp4"),fixed.type=rep("numeric",4))
 ```
-The function `set.K` is used to set the covariance matrix for a random polygenic effect. (K stands for kinship, but this is a misnomer.) The default approach is $K=MM'$, where $M$ is the centered genotype matrix. In many situations, the polygenic effect is sufficient to control population structure. However, if there is strong stratification, then including population structure covariates may be desirable to further reduce p-value inflation. The function `set.params` can be used for this purpose (shown above), as well as to include other types of fixed effects (e.g., when data are collected in multiple environments).
+The function `set.K` is used to set the covariance matrix for a random polygenic effect. The default method is proportional to $MM'$, where $M$ is the centered genotype matrix. In many situations, the polygenic effect is sufficient to control population structure. However, if there is strong stratification, then including population structure covariates may be desirable to further reduce p-value inflation. The function `set.params` can be used for this purpose (shown above), as well as to include other types of fixed effects (e.g., when data are collected in multiple environments).
 
-##3. Testing markers for significance
+## Testing markers for significance
 The following code tells the software to analyze two traits using additive and simplex dominance models. 
 ```{r}
-data <- GWASpoly(data,models=c("additive","1-dom"),traits=c("tuber_shape","tuber_eye_depth"),params=params)
+#K model (default when no params are passed to the function)
+data1 <- GWASpoly(data,models=c("additive","1-dom"),
+                  traits=c("tuber_shape","tuber_eye_depth"))
+
+#P+K model
+data2 <- GWASpoly(data,models=c("additive","1-dom"),
+                  traits=c("tuber_shape","tuber_eye_depth"),params=params)
 ```
 For the dominance model, two different analyses are conducted, corresponding to whether the reference (A) or alternate (B) allele is dominant. For "ACGT" marker data, the choice of reference allele is arbtirary and included when results are written to file. 
 
 One of the standard diagnostics in GWAS is to check the inflation of the -log10(p) values (aka "scores"). This can be done using a quantile-quantile plot of the observed vs. expected values under the null hypothesis, which follows a uniform distribution and is shown with a dotted line. NEW for GWASpoly version 2: the ggplot2 package is now used to handle multiple models and traits. The user can also plot only a subset of traits and models (see the manual). 
 ```{r,fig.width=8,fig.height=5}
-qq.plot(data=data)
+library(ggplot2)
+
+#K model
+qq.plot(data1) + ggtitle(label="K model")
+
+#P+K model
+qq.plot(data2) + ggtitle(label="P+K model")
 ```
+
+The QQ plots show that the K model adequately controlled inflation for these traits; including the loadings on the principal components (P+K) was unnecessary. 
 
 The distribution of -log10(p) values along the genome is visualized using a Manhattan plot:
 ```{r,fig.width=8,fig.height=5}
-manhattan.plot(data=data)
+manhattan.plot(data1)
 ```
 
-##4. Extracting significant QTL
-There are three options for establishing a -log10(p) threshold. To control the genome-wide false positive rate, one can use either the Bonferroni method or permutation test. Alternatively, one can control the false discovery rate (FDR). The following code illustrates the Bonferroni method.
+## Extracting significant QTL
+There are several options for establishing a -log10(p) threshold. To control the genome-wide false positive rate (i.e., family-wise error rate), one can use either a Bonferroni-type correction or a permutation test. For the original "Bonferroni" method, the overall significance level is divided by the number of tests, which may be less than the total number of markers because of the minimum allele and genotype frequencies set with `set.params`. However, using the total number of tests is overly conservative because the tests are not independent. The LD between markers can be used to estimate an effective number of markers ("M.eff"), which is now the default option: 
 ```{r}
-data <- set.threshold(data,method="Bonferroni",level=0.05)
-get.QTL(data)
+data1 <- set.threshold(data1,method="Bonferroni",level=0.05)
+data1@threshold
+
+data1 <- set.threshold(data1,method="M.eff",level=0.05)
+data1@threshold
+```
+The function `get.QTL` returns all markers with scores above the threshold. The "Effect" column is the estimated marker effect. 
+```{r}
+get.QTL(data=data1)
 ```
 
 
