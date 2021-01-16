@@ -524,16 +524,16 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div id="extracting-significant-qtl" class="section level2">
 <h2>Extracting significant QTL</h2>
 <p>There are several options for establishing a -log10(p) threshold. To control the genome-wide false positive rate (i.e., family-wise error rate), one can use either a Bonferroni-type correction or a permutation test. For the original “Bonferroni” method, the overall significance level is divided by the number of tests, which may be less than the total number of markers because of the minimum allele and genotype frequencies set with <code>set.params</code>. However, using the total number of tests is overly conservative because the tests are not independent. The LD between markers can be used to estimate an effective number of markers (“M.eff”), which is now the default option:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> <span class="fu">set.threshold</span>(data1,<span class="at">method=</span><span class="st">&quot;Bonferroni&quot;</span>,<span class="at">level=</span><span class="fl">0.05</span>)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">@</span>threshold</span></code></pre></div>
-<pre><code>##                 additive 1-dom-alt 1-dom-ref
-## tuber_shape     4.816904   4.51904  4.548512
-## tuber_eye_depth 4.816904   4.51904  4.548512</code></pre>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> <span class="fu">set.threshold</span>(data1,<span class="at">method=</span><span class="st">&quot;M.eff&quot;</span>,<span class="at">level=</span><span class="fl">0.05</span>)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">@</span>threshold</span></code></pre></div>
-<pre><code>##                 additive 1-dom-alt 1-dom-ref
-## tuber_shape     4.643404   4.38158  4.411694
-## tuber_eye_depth 4.643404   4.38158  4.411694</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> <span class="fu">set.threshold</span>(data1,<span class="at">method=</span><span class="st">&quot;Bonferroni&quot;</span>,<span class="at">level=</span><span class="fl">0.05</span>)</span></code></pre></div>
+<pre><code>## Thresholds
+##                 additive 1-dom-alt 1-dom-ref
+## tuber_shape         4.82      4.52      4.55
+## tuber_eye_depth     4.82      4.52      4.55</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> <span class="fu">set.threshold</span>(data1,<span class="at">method=</span><span class="st">&quot;M.eff&quot;</span>,<span class="at">level=</span><span class="fl">0.05</span>)</span></code></pre></div>
+<pre><code>## Thresholds
+##                 additive 1-dom-alt 1-dom-ref
+## tuber_shape         4.64      4.38      4.41
+## tuber_eye_depth     4.64      4.38      4.41</code></pre>
 <p>The function <code>get.QTL</code> returns all markers with scores above the threshold. The “Effect” column is the estimated marker effect.</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get.QTL</span>(<span class="at">data=</span>data1)</span></code></pre></div>
 <pre><code>##                 Trait    Model Threshold   Marker Chrom Position Ref Alt Score

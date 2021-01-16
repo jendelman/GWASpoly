@@ -1,2 +1,6 @@
+Changes in 2.02
+* Fractional values of allele dosage are now allowed for the additive model
+* Modified permutation test to preserve relationship between fixed effects and phenotypes
+
 Changes in 2.01
 * Added option for M.eff to set.threshold

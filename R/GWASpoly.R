@@ -39,7 +39,7 @@ m <- nrow(data@map)
 data@K <- data@K[geno.gid,geno.gid]
 n.gid <- length(geno.gid)
 
-params$models <- models
+#params$models <- models
 n.model <- length(models)
 dom.models <- grep("dom",models,fixed=T)
 if (length(dom.models)>0) {

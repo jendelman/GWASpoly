@@ -86,10 +86,8 @@ manhattan.plot(data1)
 There are several options for establishing a -log10(p) threshold. To control the genome-wide false positive rate (i.e., family-wise error rate), one can use either a Bonferroni-type correction or a permutation test. For the original "Bonferroni" method, the overall significance level is divided by the number of tests, which may be less than the total number of markers because of the minimum allele and genotype frequencies set with `set.params`. However, using the total number of tests is overly conservative because the tests are not independent. The LD between markers can be used to estimate an effective number of markers ("M.eff"), which is now the default option: 
 ```{r}
 data1 <- set.threshold(data1,method="Bonferroni",level=0.05)
-data1@threshold
 
 data1 <- set.threshold(data1,method="M.eff",level=0.05)
-data1@threshold
 ```
 The function `get.QTL` returns all markers with scores above the threshold. The "Effect" column is the estimated marker effect. 
 ```{r}

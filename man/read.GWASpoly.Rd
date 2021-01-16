@@ -30,9 +30,9 @@ The first column of the phenotype file contains the genotype identifier, columns
 The first three columns of the genotype file are (1) marker name, (2) chromosome, and (3) position.  Subsequent columns contain the marker data for each individual in the population.  
 Marker data can be coded in one of three formats: 
 \itemize{
-\item "numeric": markers are coded based on the dosage of the alternate allele, taking on integer values between 0 and ploidy (fractional values not allowed)
+\item "numeric": markers are coded based on the dosage of the alternate allele, taking on values between 0 and ploidy
 \item "AB": e.g., AAAB, ABBB for tetraploids
 \item "ACGT": e.g., AAAT, GGCC for tetraploids
 }
-Only bi-allelic markers are allowed.  Missing marker data will be imputed with the population mode (most frequent value) for each marker.
+Only bi-allelic markers are allowed. As of version 2.02 of the package, fractional values of dosage are allowed for the "numeric" format, with missing values imputed by the population mean for each marker. The fractional values are only used for the additive genetic model; for the other models, dosages are rounded to the nearest whole number. If the input allele dosages are whole numbers, then missing values are imputed with the population mode (most frequent value) for each marker.
 }

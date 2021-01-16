@@ -15,6 +15,7 @@
 #' @return Variable of class \code{GWASpoly.thresh}
 #' 
 #' @export
+#' @importFrom stats cor
 #' 
 set.threshold <- function(data,method="M.eff",level=0.05,n.permute=1000,n.core=1) {
 
@@ -44,15 +45,15 @@ set.threshold <- function(data,method="M.eff",level=0.05,n.permute=1000,n.core=1
 		trait <- traits[i]
 		if (method=="permute") {
 			print(paste("Trait:",trait),quote=F)
-			y <- data@pheno[,trait]
-			ix <- which(!is.na(y))
+			#y <- data@pheno[,trait]
+			#ix <- which(!is.na(y))
 			max.scores <- matrix(NA,n.permute,n.model)
 			colnames(max.scores) <- models
 			for (q in 1:n.permute) {
 				print(paste("Permutation",q),quote=F)
 				data2 <- data
-				data2@pheno[ix,trait] <- sample(y[ix])
-				data2 <- GWASpoly(data2,models=data@params$models,traits=trait,params=data@params,quiet=T,n.core=n.core)
+				data2@pheno[,1] <- sample(data@pheno[,1]) #permute id
+				data2 <- GWASpoly(data2,models=models,traits=trait,params=data@params,quiet=T,n.core=n.core)
 				for (j in 1:n.model) {max.scores[q,j] <- max(data2@scores[[trait]][,models[j]],na.rm=T)}				
 			}
 		}
@@ -81,9 +82,11 @@ set.threshold <- function(data,method="M.eff",level=0.05,n.permute=1000,n.core=1
 				}
 			}
 			if (method=="permute") {
-				threshold[i,j] <- sort(max.scores[,model],decreasing=TRUE)[floor(level*n.permute)]
+				threshold[i,j] <- sort(max.scores[,model],decreasing=TRUE)[max(floor(level*n.permute),1)]
 			}	
 		}
 	}
+	cat("Thresholds\n")
+	print(round(threshold,2))
 	return(new("GWASpoly.thresh",map=data@map,pheno=data@pheno,fixed=data@fixed,geno=data@geno,ploidy=data@ploidy,K=data@K,scores=data@scores,effects=data@effects,params=data@params,threshold=threshold))
 }
