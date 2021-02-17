@@ -20,5 +20,5 @@ ggplot2 object
 Create Manhattan plot
 }
 \details{
-Results for the ref and alt versions of the dominance model are combined
+Results for the ref and alt versions of the dominance model are combined. If \code{data} is the output from \code{\link{set.threshold}}, then the threshold is displayed as a horizontal dashed line when \code{models} contains a single model. Because the threshold varies between models, it is not drawn when multiple models are included. Although the ref and alt versions of each dominance model are slightly different (as seen with \code{\link{qq.plot}}), they are treated as a single model for the Manhattan plot, and the average threshold is shown.
 }
