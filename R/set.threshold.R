@@ -67,7 +67,11 @@ set.threshold <- function(data,method="M.eff",level=0.05,n.permute=1000,n.core=1
 			  me <- 0
 			  for (chr in chrom) {
 			    ix <- data@map[intersect(iv,which(data@map[,2]==chr)),1]
-			    me <- me + Keff(r2=r2[[chr]][ix,ix],alpha=level)
+			    if (length(ix)>1) {
+			      me <- me + Keff(r2=r2[[chr]][ix,ix],alpha=level)
+			    } else {
+			      me <- me + 1
+			    }
 			  }
 			  threshold[i,j] <- -log10(level/me)
 			}

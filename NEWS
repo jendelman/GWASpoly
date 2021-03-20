@@ -1,3 +1,6 @@
+Changes in 2.04
+* Fixed case of 1 marker per chromosome
+
 Changes in 2.03
 * Added horizontal line for the detection threshold in manhattan.plot
 

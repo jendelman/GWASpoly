@@ -1,6 +1,6 @@
 Package: GWASpoly
 Title: Genome-wide Association Studies for Autopolyploids
-Version: 2.03
+Version: 2.04
 Author: Jeffrey B. Endelman, Umesh R. Rosyara
 Maintainer: Jeffrey Endelman <endelman@wisc.edu>
 Description: Designed for genome-wide association studies in autopolyploids.  
