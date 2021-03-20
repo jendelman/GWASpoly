@@ -31,6 +31,9 @@ if (is.null(params)) {params <- set.params()}
 if (!is.null(params$fixed)) {
 	stopifnot(is.element(params$fixed,colnames(data@fixed)))
 }
+if (length(union(grep("ref",models,fixed=T),grep("alt",models,fixed=T)))) {
+  stop("Do not include `dom` or `alt` in the model name.")
+}
 if (is.null(traits)) {traits <- colnames(data@pheno)[-1]}
 stopifnot(is.element(traits,colnames(data@pheno)[-1]))
 
