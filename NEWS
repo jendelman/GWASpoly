@@ -1,3 +1,6 @@
+Changes in 2.05
+* Added function fit.QTL
+
 Changes in 2.04
 * Fixed case of 1 marker per chromosome
 
