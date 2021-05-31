@@ -9,7 +9,7 @@ LazyData: true
 RoxygenNote: 7.1.1
 Encoding: UTF-8
 Imports: rrBLUP, methods, ggplot2, tidyr, stats
-Suggests: parallel, knitr
+Suggests: parallel, knitr, rmarkdown
 VignetteBuilder: knitr
 Collate: 
     'GWASpoly.data.R'
