@@ -4,7 +4,7 @@
 \alias{manhattan.plot}
 \title{Create Manhattan plot}
 \usage{
-manhattan.plot(data, traits = NULL, models = NULL)
+manhattan.plot(data, traits = NULL, models = NULL, chrom = NULL)
 }
 \arguments{
 \item{data}{Variable of class \code{GWASpoly.fitted}}
@@ -12,6 +12,8 @@ manhattan.plot(data, traits = NULL, models = NULL)
 \item{traits}{Vector of trait names (by default, all traits plotted)}
 
 \item{models}{Vector of model names (by default, all models plotted)}
+
+\item{chrom}{optional, to plot only one chromosome}
 }
 \value{
 ggplot2 object

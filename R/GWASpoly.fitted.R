@@ -5,7 +5,7 @@
 #' @slot geno matrix with allele dosages
 #' @slot fixed data frame of fixed effects
 #' @slot ploidy ploidy
-#' @slot K covariance matrix for polygenic effect
+#' @slot K list of covariance matrices 
 #' @slot scores -log10(p) results 
 #' @slot effects estimated marker effects
 #' @slot params parameters used for the analysis

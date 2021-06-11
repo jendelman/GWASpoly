@@ -16,6 +16,8 @@
 #' 
 #' @export
 #' @importFrom stats cor
+#' @import Matrix
+#' @importFrom methods as
 #' 
 set.threshold <- function(data,method="M.eff",level=0.05,n.permute=1000,n.core=1) {
 
@@ -37,7 +39,7 @@ set.threshold <- function(data,method="M.eff",level=0.05,n.permute=1000,n.core=1
 	  names(r2) <- chrom
 	  for (i in chrom) {
 	    ix <- which(data@map[,2]==i)
-	    r2[[i]] <- cor(data@geno[,ix])^2
+	    r2[[i]] <- as(cor(data@geno[,ix])^2,"dspMatrix")
 	  }
 	}
 	

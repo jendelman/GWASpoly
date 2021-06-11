@@ -1,3 +1,12 @@
+Changes in 2.06
+* Implemented leave-one-chromosome-out
+* Can make Manhattan plot for one chromosome
+* Can filter output from get.QTL based on window
+* qq.plot now displays results for each chromosome separately
+* created LD.plot function
+* updated vignette with new dataset
+* use package Matrix to store symmetric matrices
+
 Changes in 2.05
 * Added function fit.QTL
 

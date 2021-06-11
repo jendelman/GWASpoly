@@ -2,7 +2,7 @@
 #' 
 #' Set parameters
 #' 
-#' The list returned by the function should be passed to \code{GWASpoly} function.
+#' The list returned by the function should be passed to \code{GWASpoly} function. 
 #' 
 #' @param fixed Vector of names of fixed effects
 #' @param fixed.type Vector of effect types ("numeric" or "factor"), corresponding to the effects listed in "fixed"
@@ -21,7 +21,7 @@
 #' 
 #' @export
 
-set.params <- function(fixed=NULL,fixed.type=NULL,n.PC=0,MAF=0.05,geno.freq=0.95,P3D=T) {
+set.params <- function(fixed=NULL,fixed.type=NULL,n.PC=0,MAF=0.001,geno.freq=0.999,P3D=T) {
 stopifnot(MAF > 0)
 stopifnot(MAF < 0.5)
 stopifnot(geno.freq > 0)

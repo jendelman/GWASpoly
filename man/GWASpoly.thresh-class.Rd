@@ -21,7 +21,7 @@ S4 class with results from genome-wide scan and detection threshold
 
 \item{\code{ploidy}}{ploidy}
 
-\item{\code{K}}{covariance matrix for polygenic effect}
+\item{\code{K}}{list of covariance matrices}
 
 \item{\code{scores}}{-log10(p) results}
 

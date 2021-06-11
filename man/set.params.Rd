@@ -8,8 +8,8 @@ set.params(
   fixed = NULL,
   fixed.type = NULL,
   n.PC = 0,
-  MAF = 0.05,
-  geno.freq = 0.95,
+  MAF = 0.001,
+  geno.freq = 0.999,
   P3D = T
 )
 }

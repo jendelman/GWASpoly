@@ -7,14 +7,16 @@
 #' @param data Variable of class \code{GWASpoly.fitted}
 #' @param traits Vector of trait names (by default, all traits plotted)
 #' @param models Vector of model names (by default, all models plotted)
+#' @param chrom optional, to plot only one chromosome
 #' 
 #' @return ggplot2 object
 #' 
 #' @export
 #' @import ggplot2
 #' @importFrom tidyr pivot_longer
+#' @importFrom rlang .data
 
-manhattan.plot <- function(data,traits=NULL,models=NULL) {
+manhattan.plot <- function(data,traits=NULL,models=NULL,chrom=NULL) {
 		
 	stopifnot(inherits(data,"GWASpoly.fitted"))
   if (is.null(traits)) {
@@ -23,7 +25,6 @@ manhattan.plot <- function(data,traits=NULL,models=NULL) {
     stopifnot(all(is.element(traits,names(data@scores))))
   }
   n.trait <- length(traits)
-  n.model <- length(models)
   all.models <- colnames(data@scores[[1]])
   if (is.null(models)) {
     models <- all.models
@@ -33,16 +34,23 @@ manhattan.plot <- function(data,traits=NULL,models=NULL) {
   }
 
   plotme <- thresh.data <- NULL
-  x <- get_x(data@map[,2:3])
+  if (is.null(chrom)) {
+    x <- get_x(data@map[,2:3])
+    ix <- 1:nrow(data@map)
+  } else {
+    stopifnot(chrom %in% levels(data@map$Chrom))
+    ix <- which(as.character(data@map$Chrom)==chrom)
+    x <- data@map$Position[ix]/1e6
+  }
   for (k in 1:n.trait) {
-    scores <- as.data.frame(data@scores[[traits[k]]][,models])
+    scores <- as.data.frame(data@scores[[traits[k]]][ix,models])
     colnames(scores) <- models
     scores$x <- x
-    scores$color <- factor(ifelse(as.integer(factor(data@map[,2]))%%2==1,1,0))
+    scores$color <- factor(ifelse(as.integer(factor(data@map[ix,2]))%%2==1,1,0))
     tmp <- pivot_longer(data=scores,cols=match(models,colnames(scores)),names_to="model",values_to="y",values_drop_na=TRUE)
     tmp$trait <- traits[k]
-    if (n.model==1 & inherits(data,"GWASpoly.thresh")) {
-      thresh.data <- rbind(thresh.data,data.frame(y=mean(data@threshold[traits[k],models]),trait=traits[k]))
+    if (inherits(data,"GWASpoly.thresh")) {
+      thresh.data <- rbind(thresh.data,data.frame(y=max(data@threshold[traits[k],models]),trait=traits[k]))
     }
     plotme <- rbind(plotme,tmp)
   }
@@ -51,15 +59,22 @@ manhattan.plot <- function(data,traits=NULL,models=NULL) {
   plotme$model <- gsub(pattern="-alt",replacement="",x=plotme$model)
   plotme$model <- factor(plotme$model)
   
-  allchr <- unique(data@map[,2])
-  breaks <- (tapply(x,data@map[,2],max) + tapply(x,data@map[,2],min))/2
-  p <- ggplot(data=plotme,aes(x=x,y=y,colour=color,shape=model)) +
-    ylab(expression(paste("-log"[10],"(p)"))) +
-    theme_bw() + theme(text = element_text(size=15),panel.grid = element_blank()) +
-    scale_x_continuous(name="Chromosome",breaks=breaks,labels=allchr) +
-    guides(colour="none") + geom_point() + scale_shape(solid=FALSE) + scale_colour_manual(values = c("cornflowerblue","darkblue")) + facet_wrap(~trait)
-  if (n.model==1 & inherits(data,"GWASpoly.thresh")) {
-    p <- p + geom_hline(data=thresh.data,mapping=aes(yintercept=y),linetype=2,colour="grey50") + guides(shape=FALSE)
+  p <- ggplot(data=plotme,aes(x=.data$x,y=.data$y,colour=.data$color,shape=.data$model)) +
+    ylab(expression(paste("-log"[10],"(p)"))) + guides(colour="none") + 
+    theme_bw() + theme(text = element_text(size=15),panel.grid = element_blank()) + 
+    geom_point() + scale_shape(solid=FALSE) + facet_wrap(~trait)
+  
+  if (is.null(chrom)) {
+    allchr <- unique(data@map[,2])
+    breaks <- (tapply(x,data@map[,2],max) + tapply(x,data@map[,2],min))/2
+    p <- p + scale_x_continuous(name="Chromosome",breaks=breaks,labels=allchr) +
+     scale_colour_manual(values=c("#21908c","#440154"))
+  } else {
+    p <- p + scale_x_continuous(name="Position (Mb)") + scale_colour_manual(values="#440154")
+  }
+    
+  if (inherits(data,"GWASpoly.thresh")) {
+    p <- p + geom_hline(data=thresh.data,mapping=aes(yintercept=.data$y),linetype=2,colour="grey50")
   }
 	return(p)	
 }

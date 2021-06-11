@@ -23,6 +23,7 @@
 #' @export
 #' @importFrom rrBLUP mixed.solve
 #' @importFrom stats model.matrix
+#' @importFrom parallel makeCluster clusterExport stopCluster parLapply
 #' 
 GWASpoly <- function(data,models,traits=NULL,params=NULL,n.core=1,quiet=F) {
 	
@@ -38,11 +39,25 @@ if (is.null(traits)) {traits <- colnames(data@pheno)[-1]}
 stopifnot(is.element(traits,colnames(data@pheno)[-1]))
 
 geno.gid <- rownames(data@geno)
-m <- nrow(data@map)
-data@K <- data@K[geno.gid,geno.gid]
 n.gid <- length(geno.gid)
 
-#params$models <- models
+#data@K <- data@K[geno.gid,geno.gid] unnecessary, removed 06-06-21
+#prepare K matrix
+m <- nrow(data@map)
+n.chr <- length(levels(data@map$Chrom))
+LOCO <- length(data@K) > 1
+if (LOCO) {
+  K <- vector("list",n.chr)
+  for (i in 1:n.chr) {
+    K[[i]] <- makeLOCO(data@K,exclude=i)
+  }
+} else {
+  if (!params$P3D) {
+    stop("Run set.K using LOCO=TRUE to use P3D=FALSE")
+  }
+  K <- data@K
+}
+
 n.model <- length(models)
 dom.models <- grep("dom",models,fixed=T)
 if (length(dom.models)>0) {
@@ -62,63 +77,101 @@ models <- c(models[other.models],dom.models2)
 n.model <- length(models)
 n.trait <- length(traits)
 if (params$n.PC > 0) {
-	eig.vec <- eigen(data@K)$vectors
+  if (LOCO) {
+	  eig.vec <- eigen(makeLOCO(data@K,exclude=integer(0)))$vectors
+  } else {
+    eig.vec <- eigen(data@K[[1]])$vectors
+  }
 }
 all.scores <- vector("list",n.trait)
 names(all.scores) <- traits
 all.effects <- all.scores
 
-for (j in 1:n.trait) {
-trait <- traits[j]
-if (!quiet) {cat(paste("Analyzing trait:",trait,"\n"))}
-not.miss <- which(!is.na(data@pheno[,trait]))
-y <- data@pheno[not.miss,trait]
-pheno.gid <- data@pheno[not.miss,1]
-n <- length(y)
-Z <- matrix(0,n,n.gid)
-Z[cbind(1:n,match(pheno.gid,geno.gid))] <- 1
-X <- matrix(1,n,1)
-if (!is.null(params$fixed)) {
-	for (i in 1:length(params$fixed)) {
-		if (params$fixed.type[i]=="factor") {
-			xx <- factor(data@fixed[not.miss,params$fixed[i]])	
-			if (length(levels(xx)) > 1) {X <- cbind(X,model.matrix(~x,data.frame(x=xx))[,-1])}
-		} else {
-			X <- cbind(X,data@fixed[not.miss,params$fixed[i]])	
-		}
-	}
-}
-if (params$n.PC > 0) {
-	X <- cbind(X,Z%*%eig.vec[,1:params$n.PC])
-}
-X2 <- .make.full(X) 
+#split by chromosome
+markers <- split(data@map$Marker,data@map$Chrom)
 
-if (params$P3D) {
-	if (!quiet) {cat("P3D approach: Estimating variance components...")}
-	Hinv <- mixed.solve(y=y,X=X2,Z=Z,K=data@K,return.Hinv=TRUE)$Hinv
-	if (!quiet) {cat("Completed \n")}
-} else {
-	Hinv <- NULL
+if (n.core > 1) {
+  cl <- makeCluster(n.core)
+  clusterExport(cl=cl,varlist=NULL)
 }
-scores <- matrix(NA,m,n.model)
-colnames(scores) <- models
-rownames(scores) <- colnames(data@geno)
-betas <- scores
-for (k in 1:n.model) {
-	if (!quiet) {cat(paste("Testing markers for model:",models[k],"\n"))}
-	if ((n.core > 1)& requireNamespace("parallel",quietly=TRUE)) {
-    	it <- split(1:m,factor(cut(1:m,n.core,labels=FALSE)))
-	    score.list <- parallel::mclapply(it,.score.calc,y,Z,X2,data@K,data@geno,Hinv,data@ploidy,models[k],params$min.MAF,params$max.geno.freq,mc.cores=n.core)
-	   	scores[,k] <- unlist(lapply(score.list,function(el){el$score}))
-	    betas[,k] <- unlist(lapply(score.list,function(el){el$beta}))
-	} else {
-    	ans <- .score.calc(1:m,y,Z,X2,data@K,data@geno,Hinv,data@ploidy,models[k],params$min.MAF,params$max.geno.freq)
-    	scores[,k] <- ans$score
-    	betas[,k] <- ans$beta
-	}
+
+for (j in 1:n.trait) {
+  trait <- traits[j]
+  if (!quiet) {cat(paste("Analyzing trait:",trait,"\n"))}
+  not.miss <- which(!is.na(data@pheno[,trait]))
+  y <- data@pheno[not.miss,trait]
+  pheno.gid <- data@pheno[not.miss,1]
+  n <- length(y)
+  Z <- matrix(0,n,n.gid)
+  Z[cbind(1:n,match(pheno.gid,geno.gid))] <- 1
+  X <- matrix(1,n,1)
+  if (!is.null(params$fixed)) {
+  	for (i in 1:length(params$fixed)) {
+  		if (params$fixed.type[i]=="factor") {
+  			xx <- factor(data@fixed[not.miss,params$fixed[i]])	
+  			if (length(levels(xx)) > 1) {X <- cbind(X,model.matrix(~x,data.frame(x=xx))[,-1])}
+	  	} else {
+		  	X <- cbind(X,data@fixed[not.miss,params$fixed[i]])	
+		  }
+	  }
+  }
+  if (params$n.PC > 0) {
+	  X <- cbind(X,Z%*%eig.vec[,1:params$n.PC])
+  }
+  X2 <- .make.full(X) 
+
+  if (params$P3D) {
+    if (!quiet) {cat("P3D approach: Estimating variance components...")}
+    if (n.core > 1) {
+      tmp <- parLapply(cl=cl,X=K,fun=function(K,other){mixed.solve(y=other$y,X=other$X,Z=other$Z,K=K,return.Hinv=TRUE)$Hinv},
+              other=list(y=y,X=X2,Z=Z))
+    } else {
+      tmp <- lapply(K,function(K,other){mixed.solve(y=other$y,X=other$X,Z=other$Z,K=K,return.Hinv=TRUE)$Hinv},
+                       other=list(y=y,X=X2,Z=Z))
+    }
+    if (!LOCO) {
+      tmp2 <- vector("list",n.chr)
+      for (i in 1:n.chr)
+        tmp2[[i]] <- tmp[[1]]
+      tmp <- tmp2
+    }
+    data2 <- mapply(function(x,y){list(markers=x,Hinv=y)},x=markers,y=tmp,SIMPLIFY=FALSE)
+    if (!quiet) {cat("Completed \n")}
+  } else {
+    #can assume LOCO = TRUE
+    data2 <- mapply(function(x,y){list(markers=x,K=y)},x=markers,y=K,SIMPLIFY=FALSE)
+  }
+  
+  scores <- matrix(NA,m,n.model)
+  colnames(scores) <- models
+  rownames(scores) <- colnames(data@geno)
+  betas <- scores
+  
+  for (k in 1:n.model) {
+	  if (!quiet) {cat(paste("Testing markers for model:",models[k],"\n"))}
+    
+    if (params$P3D) {  
+      if (n.core > 1) {
+        score.list <- parLapply(cl,X=data2,fun=function(x,other){.score.calc(data@geno[,x$markers],y=other$y,Z=other$Z,X=other$X,K=NULL,Hinv=x$Hinv,ploidy=other$ploidy,model=other$model,min.MAF=other$min.MAF,max.geno.freq=other$max.geno.freq)},other=list(y=y,Z=Z,X=X2,ploidy=data@ploidy,model=models[k],min.MAF=params$min.MAF,max.geno.freq=params$max.geno.freq))
+      } else {
+        score.list <- lapply(data2,function(x,other){.score.calc(data@geno[,x$markers],y=other$y,Z=other$Z,X=other$X,K=NULL,Hinv=x$Hinv,ploidy=other$ploidy,model=other$model,min.MAF=other$min.MAF,max.geno.freq=other$max.geno.freq)},other=list(y=y,Z=Z,X=X2,ploidy=data@ploidy,model=models[k],min.MAF=params$min.MAF,max.geno.freq=params$max.geno.freq))
+      }
+    } else {
+      if (n.core > 1) {
+        score.list <- parLapply(cl,X=data2,fun=function(x,other){.score.calc(data@geno[,x$markers],y=other$y,Z=other$Z,X=other$X,K=x$K,Hinv=NULL,ploidy=other$ploidy,model=other$model,min.MAF=other$min.MAF,max.geno.freq=other$max.geno.freq)},other=list(y=y,Z=Z,X=X2,ploidy=data@ploidy,model=models[k],min.MAF=params$min.MAF,max.geno.freq=params$max.geno.freq))
+      } else {
+        score.list <- lapply(data2,function(x,other){.score.calc(data@geno[,x$markers],y=other$y,Z=other$Z,X=other$X,K=x$K,Hinv=NULL,ploidy=other$ploidy,model=other$model,min.MAF=other$min.MAF,max.geno.freq=other$max.geno.freq)},other=list(y=y,Z=Z,X=X2,ploidy=data@ploidy,model=models[k],min.MAF=params$min.MAF,max.geno.freq=params$max.geno.freq))
+      }
+    }
+    scores[,k] <- unlist(lapply(score.list,function(el){el$score}))
+    betas[,k] <- unlist(lapply(score.list,function(el){el$beta}))
+	} 
+  all.scores[[j]] <- data.frame(scores,check.names=F)
+  all.effects[[j]] <- data.frame(betas,check.names=F)
 }
-all.scores[[j]] <- data.frame(scores,check.names=F)
-all.effects[[j]] <- data.frame(betas,check.names=F)
+
+if (n.core > 1) {
+  stopCluster(cl)
 }
 
 return(new("GWASpoly.fitted",map=data@map,pheno=data@pheno,fixed=data@fixed,geno=data@geno,ploidy=data@ploidy,K=data@K,scores=all.scores,effects=all.effects,params=params))  

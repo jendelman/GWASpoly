@@ -1,6 +1,6 @@
 Package: GWASpoly
 Title: Genome-wide Association Studies for Autopolyploids
-Version: 2.05
+Version: 2.06
 Author: Jeffrey B. Endelman, Umesh R. Rosyara
 Maintainer: Jeffrey Endelman <endelman@wisc.edu>
 Description: Designed for genome-wide association studies in autopolyploids.  
@@ -8,8 +8,8 @@ License: GPL-3
 LazyData: true
 RoxygenNote: 7.1.1
 Encoding: UTF-8
-Imports: rrBLUP, methods, ggplot2, tidyr, stats
-Suggests: parallel, knitr
+Imports: rrBLUP, methods, ggplot2, tidyr, stats, parallel, rlang, scam, Matrix
+Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
 Collate: 
     'GWASpoly.data.R'
@@ -18,11 +18,13 @@ Collate:
     'GWASpoly.fitted.R'
     'GWASpoly.thresh.R'
     'Keff.R'
+    'LD.plot.R'
     'design.score.R'
     'fit.QTL.R'
     'get.QTL.R'
     'get_x.R'
     'make.full.R'
+    'makeLOCO.R'
     'manhattan.plot.R'
     'qq.plot.R'
     'qvalue.R'

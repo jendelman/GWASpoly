@@ -9,8 +9,8 @@ the package. More detailed information is available in the [package
 reference
 manual](https://jendelman.github.io/GWASpoly/GWASpoly_manual.pdf).
 
-If you use the package in a publication, please cite Rosyara et
-al. (2016) Plant Genome 9 <doi:10.3835/plantgenome2015.08.0073>
+If you use the package in a publication, please cite [Rosyara et
+al. (2016)](https://doi.org/10.3835/plantgenome2015.08.0073).
 
 The original development of the package was supported by the USDA NIFA
 SCRI (Award No. 2011-51181-30629) and Hatch (Accession No. 1002731)

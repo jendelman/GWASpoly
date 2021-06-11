@@ -4,12 +4,12 @@
 \alias{qq.plot}
 \title{Quantile-Quantile (QQ) Plot}
 \usage{
-qq.plot(data, traits = NULL, models = NULL)
+qq.plot(data, trait, models = NULL)
 }
 \arguments{
 \item{data}{Variable of class \code{GWASpoly.fitted}}
 
-\item{traits}{Vector of trait names (by default, all traits plotted)}
+\item{trait}{Trait name}
 
 \item{models}{Vector of model names (by default, all models plotted)}
 }

@@ -11,9 +11,9 @@ fit.QTL(data, trait, qtl, fixed = NULL)
 
 \item{trait}{name of trait}
 
-\item{qtl}{list of markers to fit in the multi-QTL model (see Details)}
+\item{qtl}{data frame to specify the multi-QTL model (see Details)}
 
-\item{fixed}{list to specify fixed effects (see Details)}
+\item{fixed}{data frame to specify the fixed effects (see Details)}
 }
 \value{
 data frame with partial r2 and p-values
@@ -22,5 +22,5 @@ data frame with partial r2 and p-values
 Test markers as QTL under backward elimination
 }
 \details{
-Each element of \code{qtl} is a character vector of length two with  format c("marker","model"). Each element of \code{fixed} is a character vector of length two: the first element is the name of the effect (must match column in phenotype input file) and the second element is either "factor" or "numeric". The p-value and R2 for each maker are based on the likelihood ratio test under backward elimination, comparing the deviance to the chi-squared distribution.
+\code{qtl} is a data frame with columns "Marker" and "Model", where each row corresponds to a QTL. \code{fixed} is a data frame with columns "Effect" and "Type": the first column is the name of the effect, which must match a column in the phenotype input file, and the second column is either "factor" or "numeric". The p-value and R2 for each marker are based on the likelihood ratio test under backward elimination, comparing the deviance to the chi-squared distribution.
 }

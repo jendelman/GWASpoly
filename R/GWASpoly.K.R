@@ -5,7 +5,7 @@
 #' @slot geno matrix with allele dosages
 #' @slot fixed data frame of fixed effects
 #' @slot ploidy ploidy
-#' @slot K covariance matrix for polygenic effect
+#' @slot K list of covariance matrices (one for each chromosome)
 #' 
 #' @include GWASpoly.data.R
-GWASpoly.K <- setClass("GWASpoly.K",slots=c(K="matrix"),contains="GWASpoly.data")
+GWASpoly.K <- setClass("GWASpoly.K",slots=c(K="list"),contains="GWASpoly.data")

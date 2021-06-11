@@ -21,6 +21,6 @@ S4 class with genotypes, phenotypes, and polygenic covariance
 
 \item{\code{ploidy}}{ploidy}
 
-\item{\code{K}}{covariance matrix for polygenic effect}
+\item{\code{K}}{list of covariance matrices (one for each chromosome)}
 }}
 
