@@ -1,3 +1,6 @@
+Changes in 2.07
+* Fixed bug related to model names diplo-additive, diplo-general
+
 Changes in 2.06
 * Implemented leave-one-chromosome-out
 * Can make Manhattan plot for one chromosome

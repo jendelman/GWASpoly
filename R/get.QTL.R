@@ -25,7 +25,12 @@ get.QTL <- function(data,traits=NULL,models=NULL,bp.window=1e6) {
   if (is.null(models)) {
     models <- all.models
   } else {
-    models <- unlist(lapply(as.list(models),function(x){all.models[grep(x,all.models,fixed=T)]}))
+    dom.models <- models[grep("dom",models,fixed=T)]
+    models <- setdiff(models,dom.models)
+    if (length(dom.models)>0) {
+      dom.models <- unlist(lapply(as.list(dom.models),function(x){all.models[grep(x,all.models,fixed=T)]}))
+    }
+    models <- union(models,dom.models)
     stopifnot(all(is.element(models,all.models)))
   }
 	n.model <- length(models)
