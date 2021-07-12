@@ -14,7 +14,7 @@
 #' @export
 #' @importFrom stats dist
 #' 
-get.QTL <- function(data,traits=NULL,models=NULL,bp.window=1e6) {
+get.QTL <- function(data,traits=NULL,models=NULL,bp.window=NULL) {
 	stopifnot(inherits(data,"GWASpoly.thresh"))
 	if (is.null(traits)) {
 		traits <- names(data@scores)

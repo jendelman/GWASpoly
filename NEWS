@@ -1,3 +1,6 @@
+Changes in 2.08
+* Changed default to bp.window=NULL for get.QTL
+
 Changes in 2.07
 * Fixed bug related to model names diplo-additive, diplo-general
 
