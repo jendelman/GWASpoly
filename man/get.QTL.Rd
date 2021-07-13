@@ -4,7 +4,7 @@
 \alias{get.QTL}
 \title{Extract significant QTL}
 \usage{
-get.QTL(data, traits = NULL, models = NULL, bp.window = 1e+06)
+get.QTL(data, traits = NULL, models = NULL, bp.window = NULL)
 }
 \arguments{
 \item{data}{Output from \code{set.threshold}}
