@@ -152,15 +152,15 @@ for (j in 1:n.trait) {
     
     if (params$P3D) {  
       if (n.core > 1) {
-        score.list <- parLapply(cl,X=data2,fun=function(x,other){.score.calc(data@geno[,x$markers],y=other$y,Z=other$Z,X=other$X,K=NULL,Hinv=x$Hinv,ploidy=other$ploidy,model=other$model,min.MAF=other$min.MAF,max.geno.freq=other$max.geno.freq)},other=list(y=y,Z=Z,X=X2,ploidy=data@ploidy,model=models[k],min.MAF=params$min.MAF,max.geno.freq=params$max.geno.freq))
+        score.list <- parLapply(cl,X=data2,fun=function(x,other){.score.calc(data@geno[,x$markers,drop=FALSE],y=other$y,Z=other$Z,X=other$X,K=NULL,Hinv=x$Hinv,ploidy=other$ploidy,model=other$model,min.MAF=other$min.MAF,max.geno.freq=other$max.geno.freq)},other=list(y=y,Z=Z,X=X2,ploidy=data@ploidy,model=models[k],min.MAF=params$min.MAF,max.geno.freq=params$max.geno.freq))
       } else {
-        score.list <- lapply(data2,function(x,other){.score.calc(data@geno[,x$markers],y=other$y,Z=other$Z,X=other$X,K=NULL,Hinv=x$Hinv,ploidy=other$ploidy,model=other$model,min.MAF=other$min.MAF,max.geno.freq=other$max.geno.freq)},other=list(y=y,Z=Z,X=X2,ploidy=data@ploidy,model=models[k],min.MAF=params$min.MAF,max.geno.freq=params$max.geno.freq))
+        score.list <- lapply(data2,function(x,other){.score.calc(data@geno[,x$markers,drop=FALSE],y=other$y,Z=other$Z,X=other$X,K=NULL,Hinv=x$Hinv,ploidy=other$ploidy,model=other$model,min.MAF=other$min.MAF,max.geno.freq=other$max.geno.freq)},other=list(y=y,Z=Z,X=X2,ploidy=data@ploidy,model=models[k],min.MAF=params$min.MAF,max.geno.freq=params$max.geno.freq))
       }
     } else {
       if (n.core > 1) {
-        score.list <- parLapply(cl,X=data2,fun=function(x,other){.score.calc(data@geno[,x$markers],y=other$y,Z=other$Z,X=other$X,K=x$K,Hinv=NULL,ploidy=other$ploidy,model=other$model,min.MAF=other$min.MAF,max.geno.freq=other$max.geno.freq)},other=list(y=y,Z=Z,X=X2,ploidy=data@ploidy,model=models[k],min.MAF=params$min.MAF,max.geno.freq=params$max.geno.freq))
+        score.list <- parLapply(cl,X=data2,fun=function(x,other){.score.calc(data@geno[,x$markers,drop=FALSE],y=other$y,Z=other$Z,X=other$X,K=x$K,Hinv=NULL,ploidy=other$ploidy,model=other$model,min.MAF=other$min.MAF,max.geno.freq=other$max.geno.freq)},other=list(y=y,Z=Z,X=X2,ploidy=data@ploidy,model=models[k],min.MAF=params$min.MAF,max.geno.freq=params$max.geno.freq))
       } else {
-        score.list <- lapply(data2,function(x,other){.score.calc(data@geno[,x$markers],y=other$y,Z=other$Z,X=other$X,K=x$K,Hinv=NULL,ploidy=other$ploidy,model=other$model,min.MAF=other$min.MAF,max.geno.freq=other$max.geno.freq)},other=list(y=y,Z=Z,X=X2,ploidy=data@ploidy,model=models[k],min.MAF=params$min.MAF,max.geno.freq=params$max.geno.freq))
+        score.list <- lapply(data2,function(x,other){.score.calc(data@geno[,x$markers,drop=FALSE],y=other$y,Z=other$Z,X=other$X,K=x$K,Hinv=NULL,ploidy=other$ploidy,model=other$model,min.MAF=other$min.MAF,max.geno.freq=other$max.geno.freq)},other=list(y=y,Z=Z,X=X2,ploidy=data@ploidy,model=models[k],min.MAF=params$min.MAF,max.geno.freq=params$max.geno.freq))
       }
     }
     scores[,k] <- unlist(lapply(score.list,function(el){el$score}))
