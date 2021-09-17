@@ -1,3 +1,6 @@
+Changes in 2.09
+* Fixed error with model names in set.threshold
+
 Changes in 2.08
 * Changed default to bp.window=NULL for get.QTL
 

@@ -25,6 +25,8 @@ set.threshold <- function(data,method="M.eff",level=0.05,n.permute=1000,n.core=1
 	traits <- names(data@scores)
 	n.trait <- length(traits)
 	models <- colnames(data@scores[[1]])
+	model2 <- gsub("-ref","",models,fixed=T)
+	model2 <- unique(gsub("-alt","",model2,fixed=T))
 	n.model <- length(models)
 	methods <- c("M.eff","Bonferroni","FDR","permute")
 	stopifnot(is.element(method,methods))
@@ -55,7 +57,7 @@ set.threshold <- function(data,method="M.eff",level=0.05,n.permute=1000,n.core=1
 				print(paste("Permutation",q),quote=F)
 				data2 <- data
 				data2@pheno[,1] <- sample(data@pheno[,1]) #permute id
-				data2 <- GWASpoly(data2,models=models,traits=trait,params=data@params,quiet=T,n.core=n.core)
+				data2 <- GWASpoly(data2,models=model2,traits=trait,params=data@params,quiet=T,n.core=n.core)
 				for (j in 1:n.model) {max.scores[q,j] <- max(data2@scores[[trait]][,models[j]],na.rm=T)}				
 			}
 		}

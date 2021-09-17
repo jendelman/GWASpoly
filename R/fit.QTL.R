@@ -44,6 +44,9 @@ fit.QTL <- function(data,trait,qtl,fixed=NULL) {
 	}
 	chrom <- as.character(data@map$Chrom[match(qtl$Marker,data@map$Marker)])
 	if (length(data@K) > 1) {
+	  if (length(setdiff(levels(data@map$Chrom),chrom))==0) {
+	    stop("LOCO model cannot be used because there are QTL on every chromosome. Run set.K with LOCO=FALSE")
+	  }
 	  K <- makeLOCO(data@K,exclude=match(chrom,levels(data@map$Chrom)))
 	} else {
 	  K <- data@K[[1]]
@@ -59,6 +62,7 @@ fit.QTL <- function(data,trait,qtl,fixed=NULL) {
 	  df[i] <- ncol(S[[i]])
     X <- cbind(X,Z%*%S[[i]])
 	}
+	
 	full.model <- mixed.solve(y=y,X=.make.full(X),Z=Z,K=K,method = "ML")
 
 	pval <- R2 <- numeric(n.qtl)
