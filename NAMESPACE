@@ -2,6 +2,7 @@
 
 export(GWASpoly)
 export(LD.plot)
+export(VCF2dosage)
 export(fit.QTL)
 export(get.QTL)
 export(manhattan.plot)

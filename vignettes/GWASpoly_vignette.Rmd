@@ -1,7 +1,6 @@
 ---
 title: "GWASpoly Version 2"
 author: "Jeff Endelman"
-date: "June 2021"
 output: rmarkdown::html_vignette
 vignette: >
     %\VignetteIndexEntry{GWASpoly}
@@ -12,8 +11,8 @@ vignette: >
 
 ```{r include=FALSE}
 library(knitr)
-library(rmarkdown)
-opts_chunk$set(echo = TRUE,collapse=FALSE,message=FALSE,comment="##",fig.width=5,fig.height=5)
+knitr::opts_chunk$set(echo = TRUE,collapse=FALSE,message=FALSE,comment="##",fig.width=5,fig.height=5)
+knitr::opts_knit$set(root.dir="~/Box Sync/Endelman/Software/GWASpoly")
 ```
 
 ## Overview
@@ -38,7 +37,7 @@ The following table outlines the basic workflow:
 
 Two different datasets are distributed with the package. The original marker (TableS1.csv) and phenotype (TableS2.csv) files used in this vignette were published as supplemental files by [Rosyara et al. (2016)]((https://doi.org/10.3835/plantgenome2015.08.0073). In June 2021, as part of the development of new software features, the vignette was updated to use a larger dataset from the University of Wisconsin potato breeding program.
 
-## Read the data
+## Read in data
 
 The `system.file` command can be used to obtain the path to these files, which get installed in the subdirectory "extdata." You will not need to do this when analyzing your own data; just pass the names of the files as strings.
 ```{r}
@@ -46,12 +45,23 @@ genofile <- system.file("extdata", "new_potato_geno.csv", package = "GWASpoly")
 phenofile <- system.file("extdata", "new_potato_pheno.csv", package = "GWASpoly")
 
 library(GWASpoly)
-data <- read.GWASpoly(ploidy=4,pheno.file=phenofile,geno.file=genofile,
-                      format="numeric",n.traits=1,delim=",")
+data <- read.GWASpoly(ploidy=4, pheno.file=phenofile, geno.file=genofile,
+                      format="numeric", n.traits=1, delim=",")
 ```
-The first three columns of the geno.file contain the marker name, chromosome, and map position (in either cM or bp). Subsequent columns contain the marker data, which can be coded using one of three formats: "ACGT" (i.e., nucleotide), "numeric" (based on dosage of the alternate allele = 0,1,2,..ploidy), and "AB". Missing marker data are imputed with the population mode (most frequent genotype), but this method is not recommended if there is a lot of missing data (you should use some other software for imputation before using GWASpoly).
+The first three columns of the geno.file contain the marker name, chromosome, and map position (in either cM or bp). Optionally, columns named REF and ALT can be included after the map. Subsequent columns contain the marker data, which can be coded using one of three formats: "ACGT" (i.e., nucleotide), "numeric" (based on dosage of the alternate allele = 0,1,2,..ploidy), and "AB". Missing marker data are imputed with the population mode (most frequent genotype), but this method is not recommended if there is a lot of missing data (you should use some other software for imputation before using GWASpoly).
 
 The first column of the pheno.file contains the genotype identifier (i.e., the name of the individual or clone), followed by columns of trait data (specify the number of traits with `n.traits`). After the traits can be columns with potential fixed effects. In this example, there is a single trait, potato vine maturity, measured in 6 different environments ("env").
+
+## VCF data
+
+The `VCF2dosage` function can be used to generate the genotype input file for GWASpoly from marker data in Variant Call Format (VCF). The syntax of the function is shown below:
+
+```{r eval=FALSE}
+VCF2dosage(VCF.file, dosage.file, geno.code, ploidy, samples=NULL,
+           min.DP=1, max.missing, min.minor=5)
+```
+
+Genotypes from the "GT" (posterior mode) or "DS" (posterior mean) field can be extracted from the VCF file. For more information, consult the reference manual. 
 
 ## Population structure
 
@@ -66,17 +76,14 @@ In many situations, the K model is sufficient to control population structure. T
 
 ## Marker curation
 
-GWAS relies on linkage disequilibrium (LD) between markers and QTL for detection. Even for markers near a QTL, differences in allele frequency at the two loci reduce LD, which is one reason GWAS p-values are not a simple proxy for marker-QTL distance (in contrast to linkage mapping). It follows that markers with low-allele frequency are primarily useful for detecting QTL with similar frequency, but the power to detect rare variants is low. Based on two-sample t-test calculations, if fewer than 10 individuals carry the minor allele, the power for even modestly-sized QTL (H2 = 0.1) is less than 0.5. Including markers below this threshold increases the number of hypothesis tests, and therefore the detection threshold to control the genome-wide false positive rate (see below), without contributing much to QTL discovery. 
+GWAS relies on linkage disequilibrium (LD) between markers and QTL for detection. Even for markers near a QTL, differences in allele frequency at the two loci reduce LD, which is one reason GWAS p-values are not a simple proxy for marker-QTL distance (in contrast to linkage mapping). It follows that markers with low-allele frequency are primarily useful for detecting QTL with similar frequency, but the power to detect rare variants is low.
 
-As a result, it is prudent to remove markers below a frequency threshold. Although it is common to do this curation based on minor allele frequency, a more appropriate metric for heterozygous panels (especially when dominance models are used) is maximum genotype frequency. This threshold can be set using `set.params`, which is also used to specify a fixed effect for "env" of type "factor" (the other option for fixed effects is "numeric").
+As a result, it is prudent to remove markers below a frequency threshold using the function `set.params`. Although it is common to do this based on minor allele frequency, a more appropriate metric for heterozygous panels (especially when dominance models are used) is maximum genotype frequency. This threshold can be set using `set.params`, which is also used to specify a fixed effect for “env” of type “factor” (the other option for fixed effects is “numeric”). Based on power calculations, I recommend using 1 - 5/N for the maximum geno.freq. Markers below this threshold have too low power and unnecessarily increase the detection threshold for multiple testing.
 
 ```{r}
-# For N = 957 clones
-params <- set.params(geno.freq = 1 - 10/957,fixed="env",fixed.type="factor")
-print(params)
+N <- 957 #Population size
+params <- set.params(geno.freq = 1 - 5/N, fixed = "env", fixed.type = "factor")
 ```
-
-The above output shows the default values for the other model options (including minor allele frequency). For more information about these options, consult the reference manual.
 
 ## Testing markers for significance
 

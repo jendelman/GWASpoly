@@ -27,7 +27,7 @@ Read in marker and phenotype data
 }
 \details{
 The first column of the phenotype file contains the genotype identifier, columns 2 through (n.traits + 1) contain trait values, and subsequent columns contain the levels (for factors) or numeric values (for covariates) of any fixed effects.  
-The first three columns of the genotype file are (1) marker name, (2) chromosome, and (3) position.  Subsequent columns contain the marker data for each individual in the population.  
+The first three columns of the genotype file are (1) marker name, (2) chromosome, and (3) position. Optionally, columns 4 and 5 can be REF and ALT, respectively. Subsequent columns contain the marker data for each individual in the population.  
 Marker data can be coded in one of three formats: 
 \itemize{
 \item "numeric": markers are coded based on the dosage of the alternate allele, taking on values between 0 and ploidy

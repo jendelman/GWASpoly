@@ -11,7 +11,7 @@ S4 class with genotypes, phenotypes, and polygenic covariance
 \section{Slots}{
 
 \describe{
-\item{\code{map}}{data frame with marker,chrom,and position (either bp or cM)}
+\item{\code{map}}{data frame with columns Marker,Chrom,Position,Ref,Alt}
 
 \item{\code{pheno}}{data frame of phenotypes}
 

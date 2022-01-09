@@ -8,9 +8,9 @@ set.params(
   fixed = NULL,
   fixed.type = NULL,
   n.PC = 0,
-  MAF = 0.001,
-  geno.freq = 0.999,
-  P3D = T
+  MAF = NULL,
+  geno.freq = NULL,
+  P3D = TRUE
 )
 }
 \arguments{

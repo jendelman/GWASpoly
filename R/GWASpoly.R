@@ -28,18 +28,36 @@
 GWASpoly <- function(data,models,traits=NULL,params=NULL,n.core=1,quiet=F) {
 	
 stopifnot(inherits(data,"GWASpoly.K"))
-if (is.null(params)) {params <- set.params()}
+  
+geno.gid <- rownames(data@geno)
+n.gid <- length(geno.gid)
+  
+if (is.null(params)) {
+  params <- set.params()
+}
+
+if (is.null(params$min.MAF) & is.null(params$max.geno.freq)) {
+  cat("Using default value for max.geno.freq = 1 - 5/N \n")
+  params$min.MAF <- 0
+  params$max.geno.freq <- 1 - 5/n.gid
+}
+
+if (is.null(params$max.geno.freq)) {
+  params$max.geno.freq <- 1
+}
+if (is.null(params$min.MAF)) {
+  params$min.MAF <- 0
+}
 if (!is.null(params$fixed)) {
 	stopifnot(is.element(params$fixed,colnames(data@fixed)))
 }
+
 if (length(union(grep("ref",models,fixed=T),grep("alt",models,fixed=T)))) {
   stop("Do not include `dom` or `alt` in the model name.")
 }
 if (is.null(traits)) {traits <- colnames(data@pheno)[-1]}
 stopifnot(is.element(traits,colnames(data@pheno)[-1]))
 
-geno.gid <- rownames(data@geno)
-n.gid <- length(geno.gid)
 
 #data@K <- data@K[geno.gid,geno.gid] unnecessary, removed 06-06-21
 #prepare K matrix

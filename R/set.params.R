@@ -2,7 +2,7 @@
 #' 
 #' Set parameters
 #' 
-#' The list returned by the function should be passed to \code{GWASpoly} function. 
+#' The list returned by the function should be passed to \code{GWASpoly} function.  
 #' 
 #' @param fixed Vector of names of fixed effects
 #' @param fixed.type Vector of effect types ("numeric" or "factor"), corresponding to the effects listed in "fixed"
@@ -21,12 +21,12 @@
 #' 
 #' @export
 
-set.params <- function(fixed=NULL,fixed.type=NULL,n.PC=0,MAF=0.001,geno.freq=0.999,P3D=T) {
-stopifnot(MAF > 0)
-stopifnot(MAF < 0.5)
-stopifnot(geno.freq > 0)
-stopifnot(geno.freq < 1)
-stopifnot(length(fixed)==length(fixed.type))
-stopifnot(is.element(fixed.type,c("numeric","factor")))
-return(list(fixed=fixed,fixed.type=fixed.type,n.PC=n.PC,min.MAF=MAF,max.geno.freq=geno.freq,P3D=P3D))
+set.params <- function(fixed=NULL, fixed.type=NULL, n.PC=0, MAF=NULL,
+                       geno.freq=NULL, P3D=TRUE) {
+  stopifnot(is.null(MAF) | (MAF > 0 & MAF < 0.5))
+  stopifnot(is.null(geno.freq) | (geno.freq > 0 & geno.freq < 1))
+  stopifnot(length(fixed)==length(fixed.type))
+  stopifnot(is.element(fixed.type,c("numeric","factor")))
+  return(list(fixed=fixed,fixed.type=fixed.type,n.PC=n.PC,min.MAF=MAF,
+              max.geno.freq=geno.freq,P3D=P3D))
 }

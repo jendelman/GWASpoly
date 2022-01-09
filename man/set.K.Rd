@@ -4,7 +4,7 @@
 \alias{set.K}
 \title{Set covariance matrix for polygenic effect}
 \usage{
-set.K(data, K = NULL, n.core = 1, LOCO = TRUE)
+set.K(data, K = NULL, n.core = 1, LOCO = NULL)
 }
 \arguments{
 \item{data}{Output from \code{read.GWASpoly}}
@@ -22,5 +22,5 @@ Variable of class \code{GWASpoly.K}
 Set covariance matrix for polygenic effect
 }
 \details{
-When \code{LOCO} = TRUE, K is computed for each chromosome as $K=MM'$, where M is the centered genotype matrix (lines x markers), and scaled to have unit diagonal (the overall scaling is not important for GWAS). When \code{LOCO} = FALSE, a single K matrix is computed for all markers (this is not recommended but provided for legacy reasons). Alternatively, the user can supply their own positive semidefinite K, with row.names that match the genotype identifiers (this option cannot be used with LOCO).
+When \code{LOCO} = TRUE, K is computed for each chromosome as $K=MM'$, where M is the centered genotype matrix (lines x markers), and scaled to have unit diagonal (the overall scaling is not important for GWAS). When \code{LOCO} = FALSE, a single K matrix is computed for all markers (this was the original behavior of the function). Alternatively, the user can supply their own positive semidefinite K, with row.names that match the genotype identifiers (this option cannot be used with LOCO).
 }

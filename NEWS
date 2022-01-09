@@ -1,3 +1,8 @@
+Changes in 2.10
+* Added default for max.geno.freq
+* Default value for LOCO in set.K was removed to avoid confusion. User must specify.
+* VCF2dosage function added
+
 Changes in 2.09
 * Fixed error with model names in set.threshold
 

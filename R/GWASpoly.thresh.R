@@ -1,6 +1,6 @@
 #' S4 class with results from genome-wide scan and detection threshold
 #' 
-#' @slot map data frame with marker,chrom,and position (either bp or cM)
+#' @slot map data frame with columns Marker,Chrom,Position,Ref,Alt
 #' @slot pheno data frame of phenotypes
 #' @slot geno matrix with allele dosages
 #' @slot fixed data frame of fixed effects
