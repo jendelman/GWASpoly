@@ -137,11 +137,11 @@ manhattan.plot(data2,traits="vine.maturity",chrom="chr05")
 The function `get.QTL` originally returned all markers with scores above the threshold, but as of June 2021 there is the option to filter the output so that only the most significant marker within a specified window is returned. This is useful for selecting a single marker per QTL. The appropriate window size will depend on the extent of LD in the panel, which can be visualized using the function `LD.plot`. 
 
 ```{r}
-p <- LD.plot(data2)
+p <- LD.plot(data2, max.loci=1000)
 p + xlim(0,30) 
 ```
 
-Due to the large number of haplotypes in elite potato germplasm, and because many of the potato SNP array markers are not haplotype-specific, the LD is quite low even at zero distance [(Vos et al. 2017)](https://doi.org/10.1007/s00122-016-2798-8). However, from the shape of the curve, a 5-10 Mb window seems appropriate.
+Due to the large number of haplotypes in elite potato germplasm, and because many of the potato SNP array markers are not haplotype-specific, the LD is quite low even at zero distance [(Vos et al. 2017)](https://doi.org/10.1007/s00122-016-2798-8). However, from the shape of the curve, a 5-10 Mb window seems appropriate. The argument `max.loci` controls how many markers are used per chromosome for calculating LD. To use all of the markers, set max.loci=NULL. 
 
 ```{r}
 qtl <- get.QTL(data=data2,traits="vine.maturity",models="additive",bp.window=5e6)

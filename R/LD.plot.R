@@ -2,11 +2,12 @@
 #' 
 #' Plot LD vs distance
 #' 
-#' A monotone decreasing, convex spline is fit using R package \code{scam}.  
+#' A monotone decreasing, convex spline is fit using R package \code{scam}. 
 #' 
 #' @param data variable inheriting from class \code{\link{GWASpoly}}
 #' @param max.pair maximum number of r2 pairs for the spline
 #' @param dof degrees of freedom for the spline
+#' @param max.loci maximum number of markers to use per chromosome
 #' 
 #' @return ggplot2 object
 #' 
@@ -15,7 +16,7 @@
 #' @import scam
 #' @importFrom stats dist
 
-LD.plot <- function(data,max.pair=1e4,dof=8) {
+LD.plot <- function(data,max.pair=1e4,dof=8,max.loci=NULL) {
   
   chroms <- levels(data@map$Chrom)
   n.chrom <- length(chroms)
@@ -23,6 +24,12 @@ LD.plot <- function(data,max.pair=1e4,dof=8) {
   for (i in 1:n.chrom) {
     ix <- which(data@map$Chrom==chroms[i])
     m <- length(ix)
+    if (!is.null(max.loci)) {
+      if (m > max.loci) {
+        ix <- sample(ix,max.loci)
+        m <- max.loci
+      }
+    }
     tmp <- expand.grid(col=1:m,row=1:m)
     tmp <- tmp[tmp$row >= tmp$col,]  #only need lower triangular
     r2 <- cor(data@geno[,ix])^2

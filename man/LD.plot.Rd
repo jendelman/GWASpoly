@@ -4,7 +4,7 @@
 \alias{LD.plot}
 \title{Plot LD vs distance}
 \usage{
-LD.plot(data, max.pair = 10000, dof = 8)
+LD.plot(data, max.pair = 10000, dof = 8, max.loci = NULL)
 }
 \arguments{
 \item{data}{variable inheriting from class \code{\link{GWASpoly}}}
@@ -12,6 +12,8 @@ LD.plot(data, max.pair = 10000, dof = 8)
 \item{max.pair}{maximum number of r2 pairs for the spline}
 
 \item{dof}{degrees of freedom for the spline}
+
+\item{max.loci}{maximum number of markers to use per chromosome}
 }
 \value{
 ggplot2 object
