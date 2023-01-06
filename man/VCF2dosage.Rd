@@ -2,7 +2,7 @@
 % Please edit documentation in R/VCF2dosage.R
 \name{VCF2dosage}
 \alias{VCF2dosage}
-\title{Prepare GWASpoly dosage input file from VCF file}
+\title{Convert VCF to dosage file}
 \usage{
 VCF2dosage(
   VCF.file,
@@ -16,11 +16,11 @@ VCF2dosage(
 )
 }
 \arguments{
-\item{VCF.file}{VCF filename to read in}
+\item{VCF.file}{VCF filename (can be gzipped)}
 
-\item{dosage.file}{name of CSV file to output with allele dosage}
+\item{dosage.file}{CSV filename to output with allele dosage}
 
-\item{geno.code}{genotype code in the FORMAT field: either "GT" or "DS" (see Details)}
+\item{geno.code}{genotype code in the FORMAT field: "GT" of "DS"}
 
 \item{ploidy}{ploidy}
 
@@ -33,8 +33,8 @@ VCF2dosage(
 \item{min.minor}{minimum number of samples with the minor allele. Default is 5.}
 }
 \description{
-Prepare GWASpoly dosage input file from VCF file
+Convert VCF to dosage file
 }
 \details{
-The "GT" option for \code{geno.code} is the posterior maximum genotype (e.g., 0/0/1/1), while "DS" represents the posterior mean dosage of the alternate allele. (At present, only bi-allelic variants are supported.) The VCF file must conform to version 4.1 of the VCF specification or later.
+Only bi-allelic variants supported. The "GT" option for \code{geno.code} is the posterior maximum genotype (e.g., 0/0/1/1). "DS" represents the posterior mean dosage of the alternate allele. VCF file must conform to 4.1 or later.
 }

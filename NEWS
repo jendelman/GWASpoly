@@ -1,3 +1,6 @@
+Changes in 2.12
+* minor fix to VCFdosage (n.minor=0) 
+
 Changes in 2.11
 * Added argument max.loci to LD.plot
 
