@@ -8,6 +8,7 @@
 #' @param max.pair maximum number of r2 pairs for the spline
 #' @param dof degrees of freedom for the spline
 #' @param max.loci maximum number of markers to use per chromosome
+#' @param position "bp" or "cM"
 #' 
 #' @return ggplot2 object
 #' 
@@ -16,7 +17,7 @@
 #' @import scam
 #' @importFrom stats dist
 
-LD.plot <- function(data,max.pair=1e4,dof=8,max.loci=NULL) {
+LD.plot <- function(data,max.pair=1e4,dof=8,max.loci=NULL,position="bp") {
   
   chroms <- levels(data@map$Chrom)
   n.chrom <- length(chroms)
@@ -35,7 +36,10 @@ LD.plot <- function(data,max.pair=1e4,dof=8,max.loci=NULL) {
     r2 <- cor(data@geno[,ix])^2
     r2.vec <- as.vector(r2[cbind(tmp$row,tmp$col)])
     d <- as.matrix(dist(matrix(data@map$Position[ix],ncol=1))) #distance matrix
-    d.vec <- as.vector(d[cbind(tmp$row,tmp$col)])/1e6
+    d.vec <- as.vector(d[cbind(tmp$row,tmp$col)])
+    if (position=="bp") 
+      d.vec <- d.vec/1e6
+    
     result <- rbind(result,data.frame(d=d.vec,r2=r2.vec))
   }
   
@@ -44,6 +48,11 @@ LD.plot <- function(data,max.pair=1e4,dof=8,max.loci=NULL) {
   dmax <- max(result$d)
   predans <- predict.scam(scam.ans,newdata=data.frame(d=seq(0,dmax,length.out = 500)))
   spline.data <- data.frame(d=seq(0,dmax,length.out = 500),r2=predans)
-  p <- ggplot(data=spline.data,aes(x=d,y=r2)) +  ylab(expression(r^2)) + xlab("Distance (Mb)") + theme_bw() + geom_line()
+  p <- ggplot(data=spline.data,aes(x=d,y=r2)) +  ylab(expression(r^2)) + theme_bw() + geom_line()
+  if (position=="bp") {
+    p <- p + xlab("Distance (Mb)") 
+  } else {
+    p <- p + xlab("Distance (cM)") 
+  }
   return(p)
 }

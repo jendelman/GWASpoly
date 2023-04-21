@@ -1,3 +1,6 @@
+Changes in 2.13
+* added "cM" option to LD.plot
+
 Changes in 2.12
 * minor fix to VCFdosage (n.minor=0) 
 
