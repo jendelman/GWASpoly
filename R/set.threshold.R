@@ -84,7 +84,7 @@ set.threshold <- function(data,method="M.eff",level=0.05,n.permute=1000,n.core=1
 				tmp <- cbind(10^(-scores),.qvalue(10^(-scores)))
 				tmp <- tmp[order(tmp[,2]),]
 				if (tmp[1,2] > level) {
-					threshold[i,j] <- -log10(tmp[1,1])*1.2
+					threshold[i,j] <- -log10(tmp[which.min(tmp[which(tmp[,2] == min(tmp[,2])),1])]) * 1.2
 				} else {
 					k <- max(which(tmp[,2] < level))
 					threshold[i,j] <- -log10(mean(tmp[k:(k+1),1]))
