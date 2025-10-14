@@ -82,7 +82,7 @@ set.threshold <- function(data,method="M.eff",level=0.05,n.permute=1000,n.core=1
 			}
 			if (method=="FDR") {
 				tmp <- cbind(10^(-scores),.qvalue(10^(-scores)))
-				tmp <- tmp[order(tmp[,2]),]
+				tmp <- tmp[order(tmp[,2],tmp[,1]),]
 				if (tmp[1,2] > level) {
 					threshold[i,j] <- -log10(tmp[1,1])*1.2
 				} else {

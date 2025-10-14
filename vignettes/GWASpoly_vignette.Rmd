@@ -12,7 +12,7 @@ vignette: >
 ```{r include=FALSE}
 library(knitr)
 knitr::opts_chunk$set(echo = TRUE,collapse=FALSE,message=FALSE,comment="##",fig.width=5,fig.height=5)
-knitr::opts_knit$set(root.dir="~/Box Sync/Endelman/Software/GWASpoly")
+knitr::opts_knit$set(root.dir="~/Box/Endelman/Software/GWASpoly")
 ```
 
 ## Overview

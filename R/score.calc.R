@@ -15,7 +15,7 @@ for (i in 1:m) {
 		v2 <- n - p                 
 		if (!P3D) {			
 			out <- try(mixed.solve(y=y,X=X2,Z=Z,K=K,return.Hinv=TRUE),silent=TRUE)
-			if (class(out)!="try-error") { 
+			if (!inherits(out,"try-error")) { 
 				Hinv <- out$Hinv 
 			} else {
 			  Hinv <- NULL

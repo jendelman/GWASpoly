@@ -1,3 +1,6 @@
+Changes in 2.14
+* Minor update to set.threshold (when multiple p-values have the same q-value)
+
 Changes in 2.13
 * added "cM" option to LD.plot
 
