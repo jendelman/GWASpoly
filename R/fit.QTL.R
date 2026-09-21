@@ -20,7 +20,8 @@ fit.QTL <- function(data,trait,qtl,fixed=NULL) {
   stopifnot(is.element(trait,names(data@scores)))
 	stopifnot(qtl$Model %in% c("additive","general",
 	                        paste(1:(data@ploidy/2),"dom-ref",sep="-"),
-	                        paste(1:(data@ploidy/2),"dom-alt",sep="-")))
+	                        paste(1:(data@ploidy/2),"dom-alt",sep="-"),
+	                        "diplo-general", "diplo-additive"))
 	stopifnot(qtl$Marker %in% data@map$Marker)
 	
 	not.miss <- which(!is.na(data@pheno[,trait]))
